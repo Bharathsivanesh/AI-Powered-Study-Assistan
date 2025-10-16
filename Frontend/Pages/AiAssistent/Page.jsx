@@ -3,6 +3,7 @@
 // }
 import { useState } from "react";
 import { Send, Bot, User } from "lucide-react";
+import { apiService } from "../../Services/Apicall";
 
 const AiAssistent = () => {
   const [messages, setMessages] = useState([
@@ -25,17 +26,38 @@ const AiAssistent = () => {
       };
       setMessages([...messages, newMessage]);
       setInputMessage("");
-
-      // Simulate bot response after a delay
-      setTimeout(() => {
-        const botResponse = {
-          id: messages.length + 2,
-          text: "I understand your question. Let me help you with that...",
-          isBot: true,
-        };
-        setMessages((prev) => [...prev, botResponse]);
-      }, 1000);
     }
+  };
+
+  const Getairesponse = async (query) => {
+    console.log("Query:", query);
+    await apiService({
+      endpoint:
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+      method: "POST",
+      fullUrl: true,
+      payload: {
+        contents: [
+          {
+            parts: [{ text: `${query} Give Answer without * and newline and also shrot answer i need` }],
+          },
+        ],
+      },
+      headers: {
+        "X-Goog-Api-Key": "AIzaSyAjXm95cujZ0rQj66pTh5kEZCVqjHKlCB8",
+      },
+      onSuccess: (data) => {
+        setTimeout(() => {
+          const botResponse = {
+            id: messages.length + 2,
+            text: data?.candidates[0]?.content?.parts?.[0]?.text,
+            isBot: true,
+          };
+          setMessages((prev) => [...prev, botResponse]);
+        }, 1000);
+      },
+      onError: (err) => console.error(err),
+    });
   };
 
   return (
@@ -93,12 +115,14 @@ const AiAssistent = () => {
                 className="flex-1 border-2 border-green-200 rounded-full px-4 py-3 text-green-800 placeholder-green-400 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-200"
               />
               <div className="flex items-center gap-2">
-               
                 <button
+                  onClick={() => {
+                    Getairesponse(inputMessage);
+                  }}
                   type="submit"
                   className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
                 >
-                  <Send size={25}  className="rotate-45"  />
+                  <Send size={25} className="rotate-45" />
                 </button>
               </div>
             </form>
