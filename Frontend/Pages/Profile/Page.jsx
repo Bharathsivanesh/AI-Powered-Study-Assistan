@@ -46,9 +46,7 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="mt-8 border-t pt-4 text-center text-sm text-gray-400">
-          © 2025 Bharath | All Rights Reserved
-        </div>
+
       </div>
     </div>
   );
