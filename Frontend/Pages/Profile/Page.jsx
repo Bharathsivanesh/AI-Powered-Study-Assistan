@@ -30,23 +30,10 @@ export default function Profile() {
             <Edit2 size={16} /> Edit Profile
           </button>
         </div>
-
-        <div className="mt-8 space-y-4">
-          <div className="flex items-center gap-3 text-gray-700">
-            <Mail className="text-indigo-500" size={20} />
-            <span>{user.email}</span>
-          </div>
-          <div className="flex items-center gap-3 text-gray-700">
-            <Phone className="text-indigo-500" size={20} />
-            <span>{user.phone}</span>
-          </div>
-          <div className="flex items-center gap-3 text-gray-700">
-            <MapPin className="text-indigo-500" size={20} />
-            <span>{user.location}</span>
-          </div>
+ <button className="mt-4 flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg transition-all duration-300">
+            <Edit2 size={16} /> Edit Page
+          </button>
         </div>
-
-
       </div>
     </div>
   );
