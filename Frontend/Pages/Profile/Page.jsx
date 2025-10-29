@@ -33,6 +33,14 @@ export default function Profile() {
  <button className="mt-4 flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg transition-all duration-300">
             <Edit2 size={16} /> Edit Page
           </button>
+            <h1 className="text-2xl font-semibold mt-4 text-gray-800">
+            {user.name}
+          </h1>
+          <p className="text-gray-500 text-sm text-center">{user.bio}</p>
+
+          <button className="mt-4 flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg transition-all duration-300">
+            <Edit2 size={16} /> Edit Profile
+          </button>
         </div>
       </div>
     </div>
