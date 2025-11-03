@@ -6,16 +6,23 @@ import ChatBot from "../Components/Aichatbot";
 
 const DashboardLayout = () => {
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <Sidebar />
+    <div className="flex h-screen overflow-hidden bg-gray-50">
+      
+      <div className="h-full flex-shrink-0">
+        <Sidebar />
+      </div>
 
-      {/* Main content */}
-      <div className="flex flex-col flex-1">
-        <Topbar />
-        <main className="flex-1 p-6 overflow-y-auto">
-          <Outlet /> {/* Here your page components render */}
-           <ChatBot /> 
+     
+      <div className="flex flex-col flex-1 overflow-hidden">
+       
+        <div className="flex-shrink-0">
+          <Topbar />
+        </div>
+
+      
+        <main className="flex-1 overflow-y-auto ">
+          <Outlet /> 
+          <ChatBot />
         </main>
       </div>
     </div>
