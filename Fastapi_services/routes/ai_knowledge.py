@@ -27,11 +27,12 @@ class Question(BaseModel):
 @router.post("/ask")
 async def ask_question(payload: Question):
     """Ask a question based on Bharath’s knowledge base"""
+    print("✅ Extracted text:", flush=True)
     client = genai.Client(api_key=GEMINI_API_KEY)
     knowledge_text = load_knowledge()
 
     prompt = f"""
-You are an expert assistant. Use ONLY the following knowledge to answer the user's question. just tell me answer only
+You are an expert assistant. Use ONLY the following knowledge to answer the user's question.just give me as a paragraph not a \\n and *.
 
 Knowledge Base:
 {knowledge_text}
