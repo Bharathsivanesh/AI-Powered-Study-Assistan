@@ -8,29 +8,50 @@ import {
   Button,
   Typography,
   Paper,
-  Stack,
 } from "@mui/material";
+import { apiService } from "../Services/Apicall";
+import Loader from "react-js-loader";
 
 const ChatBot = () => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (message.trim() === "") return;
-    setChat((prev) => [...prev, { from: "user", text: message }]);
 
-    // Example AI response
-    setTimeout(() => {
-      setChat((prev) => [...prev, { from: "bot", text: "Hello! How can I help?" }]);
-    }, 700);
-
+    const userMsg = { from: "user", text: message };
+    setChat((prev) => [...prev, userMsg]);
     setMessage("");
+    setLoading(true); 
+
+    try {
+      const response = await apiService({
+        endpoint: "/ai/ask",
+        method: "POST",
+        payload: { question: message },
+      });
+
+      const botMsg = {
+        from: "bot",
+        text: response.answer || "No response received",
+      };
+      setChat((prev) => [...prev, botMsg]);
+    } catch (error) {
+      console.error("Error communicating with backend:", error);
+      setChat((prev) => [
+        ...prev,
+        { from: "bot", text: "❌ Error: Could not reach server." },
+      ]);
+    } finally {
+      setLoading(false); 
+    }
   };
 
   return (
     <>
-      {/* Floating Button */}
+     
       <Fab
         onClick={() => setOpen(true)}
         sx={{
@@ -48,7 +69,7 @@ const ChatBot = () => {
         <Bot size={24} color="white" />
       </Fab>
 
-      {/* Chat Modal */}
+    
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
           sx={{
@@ -65,7 +86,7 @@ const ChatBot = () => {
             overflow: "hidden",
           }}
         >
-          {/* Header */}
+        
           <Box
             sx={{
               backgroundColor: "#22C55E",
@@ -79,7 +100,7 @@ const ChatBot = () => {
             AI Chat Bot 🤖
           </Box>
 
-          {/* Chat Messages */}
+     
           <Box
             sx={{
               flex: 1,
@@ -88,10 +109,10 @@ const ChatBot = () => {
               bgcolor: "#f9f9f9",
               display: "flex",
               flexDirection: "column",
-              gap: 1.5,
+              gap: 1.5,  
             }}
           >
-            {chat.length === 0 ? (
+            {chat.length === 0 && !loading ? (
               <Typography
                 variant="body2"
                 color="text.secondary"
@@ -101,29 +122,47 @@ const ChatBot = () => {
                 Start chatting with AI 🤖
               </Typography>
             ) : (
-              chat.map((msg, i) => (
-                <Paper
-                  key={i}
-                  elevation={1}
-                  sx={{
-                    p: 1.2,
-                    maxWidth: "75%",
-                    alignSelf:
-                      msg.from === "user" ? "flex-end" : "flex-start",
-                    backgroundColor:
-                      msg.from === "user" ? "#DCFCE7" : "#E5E7EB",
-                    borderRadius: 2,
-                    borderTopRightRadius: msg.from === "user" ? 0 : 2,
-                    borderTopLeftRadius: msg.from === "bot" ? 0 : 2,
-                  }}
-                >
-                  <Typography variant="body2">{msg.text}</Typography>
-                </Paper>
-              ))
+              <>
+                {chat.map((msg, i) => (
+                  <Paper
+                    key={i}
+                    elevation={1}
+                    sx={{
+                      p: 1.2,
+                      maxWidth: "75%",
+                      alignSelf:
+                        msg.from === "user" ? "flex-end" : "flex-start",
+                      backgroundColor:
+                        msg.from === "user" ? "#DCFCE7" : "#E5E7EB",
+                      borderRadius: 2,
+                      borderTopRightRadius: msg.from === "user" ? 0 : 2,
+                      borderTopLeftRadius: msg.from === "bot" ? 0 : 2,
+                    }}
+                  >
+                    <Typography variant="body2">{msg.text}</Typography>
+                  </Paper>
+                ))}
+
+              
+                {loading && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-start",
+                    }}
+                  >
+                    <Loader
+                      type="bubble-top"
+                      bgColor={"#22C55E"}
+                      color={"#22C55E"}
+                      size={25}
+                    />
+                  </Box>
+                )}
+              </>
             )}
           </Box>
 
-          {/* Input Section */}
           <Paper
             sx={{
               display: "flex",
@@ -140,10 +179,12 @@ const ChatBot = () => {
               placeholder="Type a message..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              disabled={loading}
             />
             <Button
               onClick={handleSend}
               variant="contained"
+              disabled={loading}
               sx={{
                 ml: 1.5,
                 bgcolor: "#22C55E",

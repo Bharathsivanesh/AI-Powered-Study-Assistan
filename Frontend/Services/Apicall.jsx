@@ -1,7 +1,7 @@
 // src/services/apiService.js
 import axios from "axios";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "http://127.0.0.1:8000";
 
 export const apiService = async ({
   endpoint,
