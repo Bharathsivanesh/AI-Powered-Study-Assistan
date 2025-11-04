@@ -1,0 +1,5 @@
+Name: Bharath Sivanesh
+Skills: React, Node.js, Express, MongoDB, Flutter, Python, HTML, CSS, JavaScript, PHP
+Projects: Order & Billing App, Online Doctor Appointment Website, Hostel Attendance App, Result Management System (MERN)
+Interests: AI, bioinformatics, trekking, tech innovations
+Other Info: Experiwhence leading teams, organizing events, learning new tech
