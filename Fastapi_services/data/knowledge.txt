@@ -1,5 +1,37 @@
-Name: Bharath Sivanesh
-Skills: React, Node.js, Express, MongoDB, Flutter, Python, HTML, CSS, JavaScript, PHP
-Projects: Order & Billing App, Online Doctor Appointment Website, Hostel Attendance App, Result Management System (MERN)
-Interests: AI, bioinformatics, trekking, tech innovations
-Other Info: Experiwhence leading teams, organizing events, learning new tech
+Key Information about the Website:
+
+1. **Purpose**: This is an AI-Powered Study Assistant platform designed to help students with their studies.
+
+2. **Main Features**:
+   - AI Chatbot: Interactive chatbot that helps answer study-related questions
+   - Question Generation: Generate practice questions based on study materials
+   - Solve with AI: Get AI-powered solutions to problems
+   - AI Assistant: General-purpose study assistant
+   - Recommendations: Get personalized study recommendations
+   - Profile Management: Manage user profile and settings
+
+3. **User Authentication**:
+   - Users can sign in and sign up to access the platform
+   - Authentication is required to use most features
+
+4. **Payment**:
+   - The platform supports payments (via Razorpay integration)
+   - Users may need to subscribe or make payments for premium features
+
+5. **Technology Stack**:
+   - Frontend: React with Vite
+   - Backend: Django (Python) and Go microservices
+   - The bot service is built with Go
+
+6. **How to Use**:
+   - Users can interact with the AI chatbot through the chat interface
+   - Submit questions and receive AI-generated responses
+   - Generate study questions based on uploaded content
+   - Get step-by-step solutions to problems
+   - Receive personalized study recommendations
+
+When answering questions:
+- Always base your responses on this knowledge about the website
+- Be helpful, clear, and concise
+- If a question is outside the scope of the website, politely redirect the user
+- Use natural, friendly language
