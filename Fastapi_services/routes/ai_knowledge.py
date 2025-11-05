@@ -9,7 +9,7 @@ load_dotenv()
 
 router = APIRouter(prefix="/ai", tags=["AI Knowledge Chatbot"])
 
-GEMINI_API_KEY ="AIzaSyAjXm95cujZ0rQj66pTh5kEZCVqjHKlCB8"
+GEMINI_API_KEY ="AIzaSyDf94AURysZ__VT2kuZzQOJ6JpPhY9vYDY"
 if not GEMINI_API_KEY:
     raise RuntimeError("GEMINI_API_KEY not set in .env")
 
