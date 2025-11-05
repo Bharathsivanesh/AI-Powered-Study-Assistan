@@ -11,8 +11,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(ai_knowledge.router)
-app.include_router(question_generator.router)
-app.include_router(question_answer_generator.router)
 
 @app.get("/")
 def home():
