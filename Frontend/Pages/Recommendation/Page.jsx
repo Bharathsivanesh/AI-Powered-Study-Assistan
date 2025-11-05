@@ -1,4 +1,3 @@
-// export default Recommendation
 import React, { useState } from "react";
 import {
   Box,
@@ -20,6 +19,7 @@ import {
 import { Bar } from "react-chartjs-2";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import { apiService } from "../../Services/Apicall";
 
 ChartJS.register(
   CategoryScale,
@@ -32,37 +32,52 @@ ChartJS.register(
 
 const Recommendation = () => {
   const [analyzing, setAnalyzing] = useState(false);
+  const [topics, setTopics] = useState([]);
+  const [frequencies, setFrequencies] = useState([]);
+  const [topQuestions, setTopQuestions] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
-  const topics = [
-    "DBMS",
-    "Networks",
-    "Algorithms",
-    "Data Structures",
-    "OS",
-    "Comp. Arch.",
-  ];
-  const frequencies = [12, 20, 5, 15, 10, 8];
+  const handleFileChange = (e) => {
+    const newFiles = Array.from(e.target.files);
+    setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
+  };
 
-  const topQuestions = [
-    "Explain normalization in DBMS.",
-    "Differentiate between TCP and UDP.",
-    "What is a binary search algorithm?",
-    "Describe heap data structure.",
-    "Explain the concept of virtual memory.",
-  ];
+  const handleUpload = async () => {
+    if (selectedFiles.length === 0) {
+      alert("Please upload at least one image file.");
+      return;
+    }
 
-  const handleUpload = () => {
     setAnalyzing(true);
-    setTimeout(() => {
+    const formData = new FormData();
+    selectedFiles.forEach((file) => formData.append("files", file));
+
+    try {
+      await apiService({
+        endpoint: "/analyze/upload",
+        method: "POST",
+        payload: formData,
+        onSuccess: (data) => {
+          console.log("✅ API Success:", data);
+          const result = data.analysis || {};
+          setTopics(result.topics || []);
+          setFrequencies(result.frequencies || []);
+          setTopQuestions(result.topQuestions || []);
+        },
+        onError: (err) => console.error("❌ API Error:", err),
+      });
+    } catch (error) {
+      console.error("❌ Upload failed:", error);
+    } finally {
       setAnalyzing(false);
-    }, 3000);
+    }
   };
 
   const data = {
     labels: topics,
     datasets: [
       {
-        label: "Question Frequency",
+        label: "Topic Frequency",
         data: frequencies,
         backgroundColor: "#22c55e",
         borderColor: "#22c55e",
@@ -78,7 +93,7 @@ const Recommendation = () => {
       legend: { display: false },
       title: {
         display: true,
-        text: "Question Frequency by Topic",
+        text: "Topic Frequency Analysis",
         color: "#22c55e",
         font: { size: 16, weight: "bold" },
       },
@@ -90,106 +105,120 @@ const Recommendation = () => {
   };
 
   return (
-    <Box className=" flex flex-col items-center ">
-      {/* Header */}
+    <Box className="flex flex-col items-center">
+      
       <Box className="w-full max-w-6xl flex justify-between items-center p-2">
         <Typography variant="h5" fontWeight="bold" sx={{ color: "#22c55e" }}>
-          StudySmart AI – Repeated Question Recommendation System
+          StudySmart AI – Repeated Question Analyzer
         </Typography>
         <Avatar sx={{ bgcolor: "#22c55e" }}>A</Avatar>
       </Box>
 
-      {/* Upload Section */}
       <Card className="w-full max-w-6xl p-6 rounded-2xl shadow-md border border-gray-200 mb-6">
         <Typography variant="h6" fontWeight="bold" gutterBottom>
-          Upload Section
+          Upload Images
         </Typography>
         <Typography variant="body2" color="text.secondary" gutterBottom>
-          Upload your past question papers and let our AI find recurring
-          patterns for you. Upload 3+ papers for best results.
+          Upload multiple images of question papers or study materials. Our AI
+          will detect frequent topics and questions.
         </Typography>
 
         <Box className="flex flex-col md:flex-row items-center justify-between mt-4 gap-4">
-          <Button
-            variant="outlined"
-            startIcon={<CloudUploadIcon />}
-            sx={{
-              color: "#22c55e",
-              borderColor: "#22c55e",
-              // "&:hover": { borderColor: "#22c55e" , backgroundColor:"#22c55e"  },
-            }}
-          >
-            Upload More
-          </Button>
+          <input
+            id="file-upload"
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <label htmlFor="file-upload">
+            <Button
+              variant="outlined"
+              startIcon={<CloudUploadIcon />}
+              component="span"
+              sx={{
+                color: "#22c55e",
+                borderColor: "#22c55e",
+              }}
+            >
+              Choose Images ({selectedFiles.length})
+            </Button>
+          </label>
+
           <Button
             variant="contained"
             startIcon={<InsertDriveFileIcon />}
             onClick={handleUpload}
             sx={{
               backgroundColor: "#22c55e",
-              // "&:hover": { backgroundColor: green[600] },
             }}
           >
-            Process Files
+            Analyze Files
           </Button>
         </Box>
 
         {analyzing && (
           <Box className="mt-6">
             <Typography color="text.secondary" gutterBottom>
-              Analyzing... Finding patterns
+              Analyzing... Extracting key topics and repeated questions
             </Typography>
             <LinearProgress
-              sx={{ height: 8, borderRadius: 5, bgcolor: "#e5e7eb" }}
-              color="success"
+              sx={{
+                height: 8,
+                borderRadius: 5,
+                bgcolor: "#e5e7eb",
+                "& .MuiLinearProgress-bar": {
+                  backgroundColor: "#22c55e",
+                },
+              }}
             />
           </Box>
         )}
       </Card>
 
-      {/* Graphs and Stats Section */}
-      <Box className="w-full max-w-6xl grid md:grid-cols-2 gap-6">
-        {/* Chart Section */}
-        <Card className="p-6 rounded-2xl shadow-md border border-gray-200">
-          <Bar data={data} options={options} />
-        </Card>
+      {topics.length > 0 && (
+        <Box className="w-full max-w-6xl grid md:grid-cols-2 gap-6">
+          {/* Chart Section */}
+          <Card className="p-6 rounded-2xl shadow-md border border-gray-200">
+            <Bar data={data} options={options} />
+          </Card>
 
-        {/* Top 5 Repeated Questions */}
-        <Card className="p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col">
-          <Typography
-            variant="h6"
-            fontWeight="bold"
-            gutterBottom
-            sx={{ color: "#22c55e" }}
-          >
-            Top 5 Most Repeated Questions
-          </Typography>
-          <Box
-            className="flex flex-col gap-3 mt-2 overflow-y-auto pr-2"
-            style={{ maxHeight: "250px" }}
-          >
-            {topQuestions.map((q, i) => (
-              <Box
-                key={i}
-                className="p-3 rounded-xl border border-gray-200 bg-green-50 flex items-start gap-2"
-              >
-                <Typography
-                  variant="body2"
-                  color="text.primary"
-                  className="leading-snug"
+          {/* Top Repeated Questions */}
+          <Card className="p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col">
+            <Typography
+              variant="h6"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ color: "#22c55e" }}
+            >
+              Top Repeated Questions
+            </Typography>
+            <Box
+              className="flex flex-col gap-3 mt-2 overflow-y-auto pr-2"
+              style={{ maxHeight: "250px" }}
+            >
+              {topQuestions.map((q, i) => (
+                <Box
+                  key={i}
+                  className="p-3 rounded-xl border border-gray-200 bg-green-50 flex items-start gap-2"
                 >
-                  <span className="font-semibold text-green-500">
-                    Q{i + 1}:
-                  </span>{" "}
-                  {q}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-        </Card>
-      </Box>
-
-      {/* Footer Action */}
+                  <Typography
+                    variant="body2"
+                    color="text.primary"
+                    className="leading-snug"
+                  >
+                    <span className="font-semibold text-green-500">
+                      Q{i + 1}:
+                    </span>{" "}
+                    {q}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Card>
+        </Box>
+      )}
     </Box>
   );
 };
