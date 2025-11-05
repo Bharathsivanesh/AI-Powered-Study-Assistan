@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routes import ai_knowledge,question_generator,question_answer_generator
+from .routes import ai_knowledge,question_generator,question_answer_generator,topic_analysis
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="AI Study Assistant (FastAPI)")
@@ -13,6 +13,7 @@ app.add_middleware(
 app.include_router(ai_knowledge.router)
 app.include_router(question_generator.router)
 app.include_router(question_answer_generator.router)
+app.include_router(topic_analysis.router)
 
 @app.get("/")
 def home():

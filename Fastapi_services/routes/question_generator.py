@@ -12,7 +12,7 @@ load_dotenv()
 router = APIRouter(prefix="/questions", tags=["Question Generator"])
 
 # ✅ Initialize Gemini Client
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyAjXm95cujZ0rQj66pTh5kEZCVqjHKlCB8")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyDf94AURysZ__VT2kuZzQOJ6JpPhY9vYDY")
 if not GEMINI_API_KEY:
     raise RuntimeError("❌ GEMINI_API_KEY not found in .env")
 
@@ -51,13 +51,18 @@ async def upload_pdf(file: UploadFile = File(...)):
 
         # Step 3: Prompt for Gemini
         prompt = f"""
-You are a question paper creator.
-Use the syllabus text below to identify main topics and generate 3–5 questions under each topic.
+You are an intelligent question paper creator.
+Use the syllabus text below to identify main topics and generate 3–5 **meaningful and detailed questions** under each topic.
 
-Output **only valid JSON**.
-Example:
-{{ "Topic 1": ["Q1", "Q2"], "Topic 2": ["Q1", "Q2"] }}
+Your response must be in the following strict JSON format:
+{{
+  "questions": {{
+      "Topic 1": ["Question 1", "Question 2"],
+      "Topic 2": ["Question 1", "Question 2"]
+  }}
+}}
 
+Do not include any explanations, markdown, or extra text outside the JSON.
 Syllabus:
 {extracted_text}
 """
