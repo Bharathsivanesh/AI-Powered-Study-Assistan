@@ -1,41 +1,81 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Download, Upload } from "lucide-react";
+import { apiService } from "../../Services/Apicall";
 
 const GenerateQuestion = () => {
   const [file, setFile] = useState(null);
   const [progress, setProgress] = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [topics, setTopics] = useState([]);
+  const [selectedTopic, setSelectedTopic] = useState("");
+  const [questions, setQuestions] = useState([]);
+  const [allQuestions, setAllQuestions] = useState({});
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const uploadedFile = e.target.files[0];
-    if (uploadedFile) {
-      setFile(uploadedFile);
-      setIsGenerating(true);
-      setProgress(0);
+    if (!uploadedFile) return;
 
-      let current = 0;
-      const interval = setInterval(() => {
-        current += 10;
-        setProgress(current);
-        if (current >= 100) {
-          clearInterval(interval);
-          setIsGenerating(false);
-        }
-      }, 400);
+    setFile(uploadedFile);
+    setIsGenerating(true);
+    setProgress(0);
+
+    // Animate fake progress
+    const interval = setInterval(() => {
+      setProgress((p) => (p < 90 ? p + 10 : p));
+    }, 400);
+
+    // Prepare form data for file upload
+    const formData = new FormData();
+    formData.append("file", uploadedFile);
+
+    try {
+      const data = await apiService({
+        endpoint: "/questions/upload",
+        method: "POST",
+        payload: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      clearInterval(interval);
+      setProgress(100);
+      setIsGenerating(false);
+
+   
+      const parsedData = data.questions.questions;
+
+   
+      const topicKeys = Object.keys(parsedData);
+      setTopics(topicKeys);
+      setSelectedTopic(topicKeys[0]);
+      setAllQuestions(parsedData);
+      setQuestions(parsedData[topicKeys[0]]);
+    } catch (error) {
+      clearInterval(interval);
+      setIsGenerating(false);
+      alert(
+        "Error generating questions: " +
+          (error.response?.data?.detail || error.message)
+      );
+      console.error(error);
     }
+  };
+
+  const handleTopicChange = (e) => {
+    const topic = e.target.value;
+    setSelectedTopic(topic);
+    setQuestions(allQuestions[topic] || []);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-row">
       {/* LEFT SIDE - Upload Section */}
-      <div className="w-3/4 p-10 flex flex-col ">
+      <div className="w-3/4 p-10 flex flex-col">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Generate Study Questions
         </h1>
         <p className="text-gray-600 mb-8">
-          Upload your question papers and let our AI generate study questions
-          for you.
+          Upload your syllabus and let AI generate topic-wise questions for you.
         </p>
 
         {/* Upload Box */}
@@ -45,7 +85,7 @@ const GenerateQuestion = () => {
             Drag & drop your file here or click to upload
           </p>
           <p className="text-sm text-gray-400 mb-4">
-            Supports: PDF, DOCX, PNG, JPG. Max size: 10MB.
+            Supports: PDF only. Max size: 10MB.
           </p>
           <label className="cursor-pointer">
             <input type="file" className="hidden" onChange={handleFileUpload} />
@@ -71,26 +111,11 @@ const GenerateQuestion = () => {
           </div>
         )}
       </div>
-
-      {/* RIGHT SIDE */}
-      <div className="w-[30%] bg-white shadow-inner flex flex-col border-l border-gray-200 ">
-        
-        <div className="flex flex-col items-center justify-center text-center mb-6 mt-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
-            Not Ready to Upload?
-          </h3>
-          <p className="text-sm text-gray-500 mb-3">
-            Try a sample set of AI-generated questions.
-          </p>
-          <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-            <Download className="w-4 h-4" /> Sample Questions
-          </button>
-        </div>
-
-      
-        {!isGenerating && progress === 100 && (
+      {/* RIGHT SIDE - Generated Questions */}
+      <div className="w-[40%] h-screen bg-white shadow-inner flex flex-col border-l border-gray-200 overflow-y-auto">
+        {!isGenerating && progress === 100 && topics.length > 0 && (
           <motion.div
-            className="bg-gray-50 border-t border-gray-200 mt-6  p-8 pt-6 flex-1 overflow-y-auto"
+            className=" p-8 pt-6 flex-1 overflow-y-auto"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -99,18 +124,24 @@ const GenerateQuestion = () => {
               Generated Questions
             </h2>
 
-            <select className="border border-gray-300 rounded-lg p-2 mb-4 w-full text-gray-700 focus:outline-none">
-              <option>Choose Topic</option>
-              <option>AI Fundamentals</option>
-              <option>Machine Learning</option>
-              <option>Data Structures</option>
+            {/* Topic Dropdown */}
+            <select
+              className="border border-gray-300 rounded-lg p-2 mb-4 w-full text-gray-700 focus:outline-none"
+              value={selectedTopic}
+              onChange={handleTopicChange}
+            >
+              {topics.map((topic) => (
+                <option key={topic} value={topic}>
+                  {topic}
+                </option>
+              ))}
             </select>
 
+            {/* Questions List */}
             <ul className="list-decimal list-inside text-gray-700 space-y-2 text-sm">
-              <li>Explain the concept of supervised learning.</li>
-              <li>What are the types of neural networks?</li>
-              <li>How does reinforcement learning work?</li>
-              <li>Differentiate between AI and ML.</li>
+              {questions.map((q, i) => (
+                <li key={i}>{q}</li>
+              ))}
             </ul>
 
             <button className="mt-5 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 w-full justify-center">
