@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Download, Upload } from "lucide-react";
 import { apiService } from "../../Services/Apicall";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const GenerateQuestion = () => {
   const [file, setFile] = useState(null);
@@ -9,9 +11,9 @@ const GenerateQuestion = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [topics, setTopics] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState("");
-  const [questions, setQuestions] = useState([]);
-  const [allQuestions, setAllQuestions] = useState({});
 
+  const [allQuestions, setAllQuestions] = useState({});
+  const [questions, setQuestions] = useState([]);
   const handleFileUpload = async (e) => {
     const uploadedFile = e.target.files[0];
     if (!uploadedFile) return;
@@ -64,6 +66,84 @@ const GenerateQuestion = () => {
 
   const hasQuestions = topics.length > 0 && progress === 100;
 
+ const handleDownloadSelected = () => {
+  if (!selectedTopic || questions.length === 0) {
+    alert("No questions available to download!");
+    return;
+  }
+
+  const doc = new jsPDF();
+
+  // Title
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.setTextColor(34, 197, 94);
+  doc.text("AI Generated Questions", 20, 20);
+
+  // Topic Title
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
+  doc.text(`Topic: ${selectedTopic}`, 20, 35);
+
+  // Questions Table
+  const formattedQuestions = questions.map((q, i) => [`${i + 1}. ${q}`]);
+
+  autoTable(doc, {
+    startY: 45,
+    head: [["Questions"]],
+    body: formattedQuestions,
+    styles: { fontSize: 11, cellPadding: 5 },
+    headStyles: {
+      fillColor: [34, 197, 94],
+      textColor: 255,
+      halign: "center",
+    },
+  });
+
+  
+  doc.save(`${selectedTopic.replace(/\s+/g, "_")}_Questions.pdf`);
+};
+
+  // ✅ Download all topics + questions
+  const handleDownloadAll = () => {
+    if (Object.keys(allQuestions).length === 0) {
+      alert("No questions available to download!");
+      return;
+    }
+
+    const doc = new jsPDF();
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.setTextColor(34, 197, 94);
+    doc.text("AI Generated Questions - All Topics", 20, 20);
+
+    let y = 35;
+
+    Object.entries(allQuestions).forEach(([topic, qns], index) => {
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`${index + 1}. ${topic}`, 20, y);
+      y += 10;
+
+      const formattedQuestions = qns.map((q, i) => [`${i + 1}. ${q}`]);
+
+      autoTable(doc, {
+        startY: y,
+        head: [["Questions"]],
+        body: formattedQuestions,
+        styles: { fontSize: 11, cellPadding: 5 },
+        headStyles: {
+          fillColor: [34, 197, 94],
+          textColor: 255,
+          halign: "center",
+        },
+      });
+
+      y = doc.lastAutoTable.finalY + 15;
+    });
+
+    doc.save("All_Topics_Questions.pdf");
+  };
   return (
     <div
       className={`min-h-screen flex ${
@@ -149,9 +229,21 @@ const GenerateQuestion = () => {
               ))}
             </ul>
 
-            <button className="mt-5 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 w-full justify-center">
-              <Download className="w-5 h-5" /> Download All
-            </button>
+            <div className="flex flex-col gap-3 mt-6">
+              <button
+                onClick={handleDownloadSelected}
+                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 justify-center transition"
+              >
+                <Download className="w-5 h-5" /> Download Selected Topic
+              </button>
+
+              <button
+                onClick={handleDownloadAll}
+                className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 justify-center transition"
+              >
+                <Download className="w-5 h-5" /> Download All Topics
+              </button>
+            </div>
           </div>
         </motion.div>
       )}
