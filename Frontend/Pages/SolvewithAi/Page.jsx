@@ -72,7 +72,7 @@ export default function SolveAi() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="max-w-6xl w-full grid md:grid-cols-2 gap-8">
+      <div className="max-w-6xl py-8 w-full grid md:grid-cols-2 gap-8">
 
         <div className="flex flex-col">
           <h2 className="text-3xl font-bold mb-4 text-green-500">

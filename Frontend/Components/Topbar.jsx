@@ -43,7 +43,7 @@ const Topbar = ({ onLogout }) => {
   const handleOpen = () => {
     setOpen(true);
     if (students.length > 0) {
-      setSelectedStudent(students[0]); 
+      setSelectedStudent(students[0]);
     }
   };
 
@@ -59,12 +59,10 @@ const Topbar = ({ onLogout }) => {
 
   return (
     <div className="flex justify-between items-center bg-white shadow px-6 py-3">
-     
       <h2 className="text-2xl font-bold italic text-green-500 tracking-wide drop-shadow-md">
         AI Study Assistant
       </h2>
 
-     
       <div className="flex items-center gap-4">
         <Notifications
           fontSize="medium"
@@ -95,11 +93,10 @@ const Topbar = ({ onLogout }) => {
             height: 600,
           }}
         >
-       
-          <div className="bg-green-500 border border-b-2 border-white text-white px-6 py-3 flex justify-between items-center">
+          <div className=" border border-b-2 border-green-500 text-white px-6 py-3 flex justify-between items-center">
             <div className="flex items-center gap-2">
-              <ChatBubbleOutline />
-              <h2 className="text-lg font-semibold tracking-wide">
+              <ChatBubbleOutline sx={{ color: "#22c55e" }} />
+              <h2 className="text-lg text-green-500 font-semibold tracking-wide">
                 Doubt Section
               </h2>
             </div>
@@ -111,7 +108,6 @@ const Topbar = ({ onLogout }) => {
             </button>
           </div>
 
-       
           <div className="flex flex-row flex-1">
             {/* LEFT: Student List */}
             <div className="w-[30%] border-r border-gray-200 overflow-y-auto bg-white">

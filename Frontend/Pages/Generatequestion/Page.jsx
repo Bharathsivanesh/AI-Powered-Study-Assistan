@@ -20,12 +20,10 @@ const GenerateQuestion = () => {
     setIsGenerating(true);
     setProgress(0);
 
-    // Animate fake progress
     const interval = setInterval(() => {
       setProgress((p) => (p < 90 ? p + 10 : p));
     }, 400);
 
-    // Prepare form data for file upload
     const formData = new FormData();
     formData.append("file", uploadedFile);
 
@@ -41,10 +39,7 @@ const GenerateQuestion = () => {
       setProgress(100);
       setIsGenerating(false);
 
-   
       const parsedData = data.questions.questions;
-
-   
       const topicKeys = Object.keys(parsedData);
       setTopics(topicKeys);
       setSelectedTopic(topicKeys[0]);
@@ -67,26 +62,35 @@ const GenerateQuestion = () => {
     setQuestions(allQuestions[topic] || []);
   };
 
+  const hasQuestions = topics.length > 0 && progress === 100;
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-row">
+    <div
+      className={`min-h-screen flex ${
+        hasQuestions ? "flex-row" : "items-start justify-center"
+      }`}
+    >
       {/* LEFT SIDE - Upload Section */}
-      <div className="w-3/4 p-10 flex flex-col">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+      <div
+        className={`${hasQuestions ? "w-3/5 p-10" : "w-full max-w-3xl p-10"}`}
+      >
+        <h1 className="text-3xl font-bold text-green-500 mb-2 text-center">
           Generate Study Questions
         </h1>
-        <p className="text-gray-600 mb-8">
+        <p className="text-gray-600 mb-8 text-center">
           Upload your syllabus and let AI generate topic-wise questions for you.
         </p>
 
         {/* Upload Box */}
         <div className="bg-white border-2 border-dashed border-gray-300 rounded-2xl p-10 flex flex-col items-center justify-center shadow-sm mb-8">
           <Upload className="w-12 h-12 text-green-500 mb-3" />
-          <p className="text-gray-600 mb-2">
+          <p className="text-gray-600 mb-2 text-center">
             Drag & drop your file here or click to upload
           </p>
-          <p className="text-sm text-gray-400 mb-4">
+          <p className="text-sm text-gray-400 mb-4 text-center">
             Supports: PDF only. Max size: 10MB.
           </p>
+
           <label className="cursor-pointer">
             <input type="file" className="hidden" onChange={handleFileUpload} />
             <span className="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 transition">
@@ -111,15 +115,16 @@ const GenerateQuestion = () => {
           </div>
         )}
       </div>
-      {/* RIGHT SIDE - Generated Questions */}
-      <div className="w-[40%] h-screen bg-white shadow-inner flex flex-col border-l border-gray-200 overflow-y-auto">
-        {!isGenerating && progress === 100 && topics.length > 0 && (
-          <motion.div
-            className=" p-8 pt-6 flex-1 overflow-y-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+
+      {/* RIGHT SIDE - Generated Questions (only visible after success) */}
+      {hasQuestions && (
+        <motion.div
+          className="w-[40%] h-screen bg-white shadow-inner flex flex-col border-l border-gray-200 overflow-y-auto"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="p-8 pt-6 flex-1 overflow-y-auto">
             <h2 className="text-xl font-semibold text-green-700 mb-4 text-center">
               Generated Questions
             </h2>
@@ -147,9 +152,9 @@ const GenerateQuestion = () => {
             <button className="mt-5 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 w-full justify-center">
               <Download className="w-5 h-5" /> Download All
             </button>
-          </motion.div>
-        )}
-      </div>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };
