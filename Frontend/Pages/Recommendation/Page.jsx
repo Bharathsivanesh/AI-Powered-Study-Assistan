@@ -107,7 +107,7 @@ const Recommendation = () => {
   return (
     <Box className="flex flex-col items-center">
       
-      <Box className="w-full max-w-6xl flex justify-between items-center p-2">
+      <Box className="w-full max-w-6xl flex justify-between items-center py-6">
         <Typography variant="h5" fontWeight="bold" sx={{ color: "#22c55e" }}>
           StudySmart AI – Repeated Question Analyzer
         </Typography>

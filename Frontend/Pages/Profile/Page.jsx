@@ -1,106 +1,103 @@
 import React from "react";
-import { Download, FileText, Brain } from "lucide-react";
-import userimage from "../../src/assets/userimage.png"
+import {  PictureAsPdf } from "@mui/icons-material";
+
 const Profile = () => {
+
+  const profile = {
+    name: "Dr. Evelyn Reed",
+    department: "Computer Science & Engineering",
+    subject: "Web Development",
+    email: "evelyn.reed@university.edu",
+    phone: "+1 (123) 456-7890",
+    avatar: "https://cdn-icons-png.flaticon.com/512/706/706830.png",
+  };
+
+
+  const materials = [
+    { title: "MERN Stack", date: "Oct 26, 2023" },
+    { title: "Introduction to React", date: "Oct 24, 2023" },
+    { title: "State Management", date: "Oct 22, 2023" },
+    { title: "Advanced CSS", date: "Oct 20, 2023" },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col  p-6">
-      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* LEFT: User Profile */}
-        <div className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center justify-center">
-          <img
-            src={userimage}
-            alt="Profile"
-            className="w-28 h-28 rounded-full mb-4 border-4 border-green-500"
-          />
-          <h2 className="text-xl font-semibold text-gray-800">Alex Johnson</h2>
-          <p className="text-gray-500 mb-4 text-sm">alex.j@email.com</p>
-
-          <button className="bg-green-100 text-green-700 px-6 py-2 rounded-lg mb-3 hover:bg-green-200 transition">
-            Edit Profile
-          </button>
-          <button className="text-red-500 font-medium hover:text-red-600">
-            Logout
-          </button>
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="md:col-span-2 flex flex-col gap-6">
-        
-          <div className="bg-white rounded-2xl shadow-md p-6 flex flex-col md:flex-row items-center justify-between">
-            <div>
-              <h3 className="text-xl font-semibold text-gray-800">
-                Your Current Plan
-              </h3>
-              <p className="text-green-600 font-medium mt-1">Pro Plan</p>
-              <p className="text-gray-500 text-sm mt-1">
-                You have full access to all our premium features. Unlock your
-                learning potential.
-              </p>
-            </div>
-            <button className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg mt-4 md:mt-0">
-              Upgrade Plan
-            </button>
+    <div className="p-8  min-h-screen">
+     
+      <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
+        {/* Left Column - Profile Details */}
+        <div className="bg-white rounded-2xl shadow-md p-6 flex-1 relative">
+          <div className="flex flex-col items-center">
+            <img
+              src={profile.avatar}
+              alt="Profile"
+              className="w-28 h-28 rounded-full border-4 border-green-100 shadow-sm mb-3"
+            />
+            <h2 className="text-2xl font-bold text-gray-800">{profile.name}</h2>
+            <p className="text-gray-500 text-sm">{profile.department}</p>
+            <div className="h-0.5 w-24 bg-green-400 mt-2 rounded-full"></div>
           </div>
 
-         
-          <div className="bg-white rounded-2xl shadow-md p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
-              Your Monthly Usage
-            </h3>
-
-           
-            <div className="space-y-5">
-              
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <div className="flex items-center gap-2">
-                    <Brain className="w-4 h-4 text-green-600" />
-                    <span>AI Question Generation</span>
-                  </div>
-                  <span className="text-gray-500">75 / 100</span>
-                </div>
-                <div className="bg-gray-200 rounded-full h-3">
-                  <div
-                    className="bg-green-500 h-3 rounded-full"
-                    style={{ width: "75%" }}
-                  ></div>
-                </div>
-              </div>
-
-             
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-green-600" />
-                    <span>Document Uploads</span>
-                  </div>
-                  <span className="text-gray-500">8 / 10</span>
-                </div>
-                <div className="bg-gray-200 rounded-full h-3">
-                  <div
-                    className="bg-green-500 h-3 rounded-full"
-                    style={{ width: "80%" }}
-                  ></div>
-                </div>
-              </div>
-
-            
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <div className="flex items-center gap-2">
-                    <Download className="w-4 h-4 text-green-600" />
-                    <span>Summary Downloads</span>
-                  </div>
-                  <span className="text-gray-500">15 / 25</span>
-                </div>
-                <div className="bg-gray-200 rounded-full h-3">
-                  <div
-                    className="bg-green-500 h-3 rounded-full"
-                    style={{ width: "60%" }}
-                  ></div>
-                </div>
-              </div>
+          <div className="space-y-4 text-sm mt-6">
+            <div>
+              <p className="text-gray-500">Name</p>
+              <p className="font-medium">{profile.name}</p>
             </div>
+            <div>
+              <p className="text-gray-500">Department</p>
+              <p className="font-medium">{profile.department}</p>
+            </div>
+            <div>
+              <p className="text-gray-500">Subject</p>
+              <p className="font-medium">{profile.subject}</p>
+            </div>
+            <div>
+              <p className="text-gray-500">Email</p>
+              <p className="font-medium">{profile.email}</p>
+            </div>
+            <div>
+              <p className="text-gray-500">Phone</p>
+              <p className="font-medium">{profile.phone}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Course Materials */}
+        <div
+          style={{ maxHeight: "550px" }}
+          className="bg-white rounded-2xl overflow-y-auto shadow-md p-6 flex-[2]"
+        >
+          <h3 className="font-semibold text-gray-800 mb-6 text-lg">
+            Generated Course Materials
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            {materials.map((item, index) => (
+              <div
+                key={index}
+                className="group relative border border-green-100 rounded-2xl p-5 bg-white shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-green-400"
+              >
+              
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-green-500 rounded-t-2xl" />
+
+                <h4 className="font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
+                  {item.title}
+                </h4>
+                <p className="text-sm text-gray-500 mt-1">{item.date}</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Generated by{" "}
+                  <span className="text-green-500 font-medium">Gemini AI</span>
+                </p>
+
+                <div className="flex justify-between items-center mt-5">
+                  <button className="flex items-center gap-1 border border-green-500 text-green-500 hover:bg-green-500 hover:text-white px-3 py-1.5 rounded-md text-sm transition-all duration-300 hover:shadow-md">
+                    <PictureAsPdf fontSize="small" />
+                    PDF
+                  </button>
+                  <button className="border border-green-500 text-green-500 hover:bg-green-500 hover:text-white px-3 py-1.5 rounded-md text-sm transition-all duration-300 hover:shadow-md">
+                    View Q&amp;A
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
