@@ -17,7 +17,7 @@ const Sidebar = () => {
     { to: "SolveAi", label: "Solve with AI", icon: <QuestionAnswer /> },
     { to: "AiAssistent", label: "AI Chat Assistant", icon: <SmartToy /> },
     { to: "Recommendation", label: "AI Recommendation", icon: <PsychologyIcon /> },
-    { to: "PricingPage", label: "Payment", icon: <Payment /> },
+    // { to: "PricingPage", label: "Payment", icon: <Payment /> },
     { to: "Profile", label: "Profile", icon: <AccountCircle /> },
   ];
 
