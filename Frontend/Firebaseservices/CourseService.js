@@ -8,18 +8,16 @@ import {
   updateDoc,
   doc,
   arrayUnion,
+  deleteDoc,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "../supabase/Supabaseconfig";
 export const addCourse = async (courseData) => {
   try {
-   
     const staffUid = localStorage.getItem("uid");
 
- 
     const courseId = uuidv4();
 
-    
     const finalCourseData = {
       C_ID: courseId,
       UID: staffUid,
@@ -31,7 +29,6 @@ export const addCourse = async (courseData) => {
       }),
     };
 
- 
     const coursesCollection = collection(db, "courses_list");
     await addDoc(coursesCollection, finalCourseData);
 
@@ -51,7 +48,7 @@ export const addCourse = async (courseData) => {
 export const getCourses = async () => {
   try {
     const staffUid = localStorage.getItem("uid");
-    
+
     const q = query(
       collection(db, "courses_list"),
       where("UID", "==", staffUid)
@@ -79,7 +76,6 @@ export const uploadPDFToCourse = async (file, courseId) => {
     if (!file || !courseId)
       return { success: false, message: "Missing file or courseId" };
 
-   
     const filePath = `course_pdfs/${courseId}/${file.name}`;
     const { data, error } = await supabase.storage
       .from("Hostep-attendence")
@@ -100,7 +96,6 @@ export const uploadPDFToCourse = async (file, courseId) => {
 
     const fileUrl = publicData.publicUrl;
 
-   
     const q = query(
       collection(db, "courses_list"),
       where("C_ID", "==", courseId)
@@ -114,7 +109,6 @@ export const uploadPDFToCourse = async (file, courseId) => {
     const courseDoc = snapshot.docs[0];
     const courseRef = doc(db, "courses_list", courseDoc.id);
 
-   
     await updateDoc(courseRef, {
       file_url: fileUrl,
       file_name: file.name,
@@ -156,5 +150,27 @@ export const updateCourseWithQA = async (courseId, qaPairs) => {
   } catch (error) {
     console.error("❌ Firestore update error:", error);
     return { success: false, error };
+  }
+};
+
+export const deleteCourse = async (courseId) => {
+  try {
+    const q = query(
+      collection(db, "courses_list"),
+      where("C_ID", "==", courseId)
+    );
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+      return { success: false, message: "Course not found" };
+    }
+
+    const courseDocId = snapshot.docs[0].id;
+    await deleteDoc(doc(db, "courses_list", courseDocId));
+
+    return { success: true, message: "Course deleted successfully!" };
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    return { success: false, message: error.message };
   }
 };

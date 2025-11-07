@@ -39,7 +39,11 @@ const AiAssistent = () => {
       payload: {
         contents: [
           {
-            parts: [{ text: `${query} Give Answer without * and newline and also shrot answer i need` }],
+            parts: [
+              {
+                text: `${query} Give Answer without * and newline and also shrot answer i need`,
+              },
+            ],
           },
         ],
       },
@@ -64,7 +68,7 @@ const AiAssistent = () => {
     <div>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center py-4 mb-8">
+        <div className="text-center py-4 mb-2">
           <h1 className="text-4xl font-bold text-green-500 mb-2">
             Chat with your AI tutor
           </h1>

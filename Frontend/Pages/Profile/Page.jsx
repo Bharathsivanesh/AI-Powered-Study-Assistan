@@ -4,6 +4,7 @@ import {
   AddCircleOutline,
   Close,
   Edit,
+  DeleteOutline,
 } from "@mui/icons-material";
 import {
   Modal,
@@ -13,7 +14,11 @@ import {
   IconButton,
   CircularProgress,
 } from "@mui/material";
-import { addCourse, getCourses } from "../../Firebaseservices/CourseService";
+import {
+  addCourse,
+  deleteCourse,
+  getCourses,
+} from "../../Firebaseservices/CourseService";
 import {
   getStaffDetails,
   updateStaffDetails,
@@ -36,7 +41,7 @@ const Profile = () => {
   // 🔹 Fetch staff details and courses on load
   useEffect(() => {
     fetchProfile();
-    FetchCourse();
+    fetchCourse();
   }, []);
 
   const fetchProfile = async () => {
@@ -75,18 +80,30 @@ const Profile = () => {
       alert("✅ Course added successfully!");
       setCourseName("");
       setOpen(false);
-      FetchCourse();
+      fetchCourse();
     } else {
       alert("❌ Failed to add course.");
     }
   };
 
-  const FetchCourse = async () => {
+  const fetchCourse = async () => {
     const response = await getCourses();
     if (response.success) {
       setMaterials(response?.message);
     } else {
       alert("❌ Failed to fetch courses.");
+    }
+  };
+
+  const handleDeleteCourse = async (courseId) => {
+    if (window.confirm("Are you sure you want to delete this course?")) {
+      const res = await deleteCourse(courseId);
+      if (res.success) {
+        alert("✅ Course deleted successfully!");
+        fetchCourse();
+      } else {
+        alert("❌ Failed to delete course: " + res.message);
+      }
     }
   };
 
@@ -182,10 +199,17 @@ const Profile = () => {
                 className="group relative border border-green-100 rounded-2xl p-5 bg-white shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-green-400"
               >
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-green-500 rounded-t-2xl" />
-
-                <h4 className="font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
-                  {item.c_name}
-                </h4>
+                <div className="flex flex-row justify-between">
+                  <h4 className="font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
+                    {item.c_name}
+                  </h4>
+                  <IconButton
+                    onClick={() => handleDeleteCourse(item.C_ID)}
+                    sx={{ color: "red" }}
+                  >
+                    <DeleteOutline />
+                  </IconButton>
+                </div>
                 <p className="text-sm text-gray-500 mt-1">
                   {item.createdAt || "N/A"}
                 </p>
@@ -200,8 +224,9 @@ const Profile = () => {
                     PDF
                   </button>
                   <button className="border border-green-500 text-green-500 hover:bg-green-500 hover:text-white px-3 py-1.5 rounded-md text-sm transition-all duration-300 hover:shadow-md">
-                    View Q&amp;A
+                    View Q&A
                   </button>
+                  {/* 🔴 Trash Bin Delete Button */}
                 </div>
               </div>
             ))}

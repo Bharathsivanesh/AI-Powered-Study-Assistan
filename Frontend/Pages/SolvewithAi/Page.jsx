@@ -10,7 +10,10 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { apiService } from "../../Services/Apicall";
-import { getCourses, updateCourseWithQA } from "../../Firebaseservices/CourseService";
+import {
+  getCourses,
+  updateCourseWithQA,
+} from "../../Firebaseservices/CourseService";
 import { Button, Card, CardContent, Grid, Modal, Box } from "@mui/material";
 import { Download } from "lucide-react";
 
@@ -112,23 +115,24 @@ export default function SolveAi() {
   };
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="max-w-6xl py-8 w-full grid md:grid-cols-2 gap-8">
+    <div className="w-full flex justify-center p-4 md:p-8">
+      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* UPLOAD SECTION */}
         <div className="flex flex-col">
-          <h2 className="text-3xl font-bold mb-4 text-green-500">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-green-500 text-center md:text-left">
             Upload Question Image
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 mb-6 text-center md:text-left">
             Upload an image of your question paper, and our AI will generate
             smart question-answer pairs for you.
           </p>
 
           <label
             htmlFor="file-upload"
-            className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-2xl p-10 cursor-pointer hover:border-green-500 transition bg-gray-50"
+            className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-2xl p-8 sm:p-10 cursor-pointer hover:border-green-500 transition bg-gray-50"
           >
             <CloudUploadIcon sx={{ fontSize: 48, color: "#22c55e" }} />
-            <p className="text-gray-700 font-medium mt-2">
+            <p className="text-gray-700 font-medium mt-2 text-center">
               {file ? file.name : "Drag and drop your image here"}
             </p>
             <span className="mt-2 text-green-500 underline font-medium">
@@ -143,36 +147,32 @@ export default function SolveAi() {
             />
           </label>
 
-          {file && (
-            <div className="mt-6 w-full">
-              {loading && (
-                <>
-                  <Typography color="text.secondary" sx={{ mb: 1 }}>
-                    Analyzing your image...
-                  </Typography>
-                  <LinearProgress
-                    variant="determinate"
-                    value={progress}
-                    sx={{
-                      height: 10,
-                      borderRadius: 5,
-                      backgroundColor: "#dcfce7",
-                      "& .MuiLinearProgress-bar": {
-                        backgroundColor: "#22c55e",
-                      },
-                    }}
-                  />
-                  <div className="flex justify-center mt-4">
-                    <CircularProgress size={30} sx={{ color: "#22c55e" }} />
-                  </div>
-                </>
-              )}
+          {file && loading && (
+            <div className="mt-6 w-full flex flex-col items-center">
+              <Typography color="text.secondary" sx={{ mb: 1 }}>
+                Analyzing your image...
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={progress}
+                sx={{
+                  height: 10,
+                  borderRadius: 5,
+                  backgroundColor: "#dcfce7",
+                  "& .MuiLinearProgress-bar": { backgroundColor: "#22c55e" },
+                  width: "100%",
+                }}
+              />
+              <div className="flex justify-center mt-4">
+                <CircularProgress size={30} sx={{ color: "#22c55e" }} />
+              </div>
             </div>
           )}
         </div>
 
-        <div>
-          <h2 className="text-3xl font-bold mb-4 text-green-500">
+        {/* AI OUTPUT SECTION */}
+        <div className="flex flex-col">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-green-500 text-center md:text-left">
             AI Answer Generation Output
           </h2>
 
@@ -217,14 +217,16 @@ export default function SolveAi() {
             )}
             <button
               onClick={handleOpen}
-              className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 justify-center transition"
+              className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-2 sm:py-3 rounded-xl shadow-md flex items-center gap-2 justify-center mt-4 w-full sm:w-auto transition"
             >
               <Download className="w-5 h-5" />
-              Upload Quetsion & Answer
+              Upload Question & Answer
             </button>
           </div>
         </div>
       </div>
+
+      {/* MODAL */}
       <Modal open={open} onClose={handleClose}>
         <Box
           sx={{
@@ -232,7 +234,7 @@ export default function SolveAi() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "50%",
+            width: { xs: "90%", sm: "70%", md: "50%" },
             maxHeight: "80vh",
             bgcolor: "background.paper",
             boxShadow: 24,
@@ -303,9 +305,7 @@ export default function SolveAi() {
                           backgroundColor: "#16a34a",
                           borderRadius: 2,
                           px: 3,
-                          "&:hover": {
-                            backgroundColor: "#15803d",
-                          },
+                          "&:hover": { backgroundColor: "#15803d" },
                         }}
                       >
                         Select
