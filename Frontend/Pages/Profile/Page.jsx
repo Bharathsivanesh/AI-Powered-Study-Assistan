@@ -1,62 +1,156 @@
-import React from "react";
-import {  PictureAsPdf } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
+import {
+  PictureAsPdf,
+  AddCircleOutline,
+  Close,
+  Edit,
+} from "@mui/icons-material";
+import {
+  Modal,
+  Box,
+  TextField,
+  Button,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
+import { addCourse, getCourses } from "../../Firebaseservices/CourseService";
+import {
+  getStaffDetails,
+  updateStaffDetails,
+} from "../../Firebaseservices/StaffService";
 
 const Profile = () => {
+  const [open, setOpen] = useState(false); // course modal
+  const [editOpen, setEditOpen] = useState(false); // edit profile modal
+  const [courseName, setCourseName] = useState("");
+  const [materials, setMaterials] = useState([]);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const profile = {
-    name: "Dr. Evelyn Reed",
-    department: "Computer Science & Engineering",
-    subject: "Web Development",
-    email: "evelyn.reed@university.edu",
-    phone: "+1 (123) 456-7890",
-    avatar: "https://cdn-icons-png.flaticon.com/512/706/706830.png",
+  // Editable fields
+  const [mobile, setMobile] = useState("");
+  const [subject, setSubject] = useState("");
+
+  const uid = localStorage.getItem("uid"); // 🔹 stored after login
+
+  // 🔹 Fetch staff details and courses on load
+  useEffect(() => {
+    fetchProfile();
+    FetchCourse();
+  }, []);
+
+  const fetchProfile = async () => {
+    const res = await getStaffDetails(uid);
+    if (res.success) {
+      setProfile(res.message);
+      setMobile(res.message.phone || "");
+      setSubject(res.message.subject || "");
+    } else {
+      console.error(res.message);
+      alert(res.message);
+    }
+    setLoading(false);
   };
 
+  const handleProfileUpdate = async () => {
+    const res = await updateStaffDetails(uid, {
+      phone: mobile,
+      subject: subject,
+    });
+    if (res.success) {
+      alert("✅ Profile updated successfully!");
+      setEditOpen(false);
+      fetchProfile();
+    } else {
+      alert("❌ Update failed: " + res.message);
+    }
+  };
 
-  const materials = [
-    { title: "MERN Stack", date: "Oct 26, 2023" },
-    { title: "Introduction to React", date: "Oct 24, 2023" },
-    { title: "State Management", date: "Oct 22, 2023" },
-    { title: "Advanced CSS", date: "Oct 20, 2023" },
-  ];
+  const handleAddCourse = async () => {
+    if (!courseName) return;
+    const courseData = { c_name: courseName };
+    const response = await addCourse(courseData);
+
+    if (response.success) {
+      alert("✅ Course added successfully!");
+      setCourseName("");
+      setOpen(false);
+      FetchCourse();
+    } else {
+      alert("❌ Failed to add course.");
+    }
+  };
+
+  const FetchCourse = async () => {
+    const response = await getCourses();
+    if (response.success) {
+      setMaterials(response?.message);
+    } else {
+      alert("❌ Failed to fetch courses.");
+    }
+  };
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <CircularProgress />
+      </div>
+    );
 
   return (
-    <div className="p-8  min-h-screen">
-     
+    <div className="p-8 min-h-screen bg-gray-50">
       <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
         {/* Left Column - Profile Details */}
         <div className="bg-white rounded-2xl shadow-md p-6 flex-1 relative">
+          <div className="flex justify-end">
+            <IconButton
+              onClick={() => setEditOpen(true)}
+              sx={{ color: "#22c55e" }}
+            >
+              <Edit />
+            </IconButton>
+          </div>
+
           <div className="flex flex-col items-center">
             <img
-              src={profile.avatar}
+              src={
+                profile?.avatar ||
+                "https://cdn-icons-png.flaticon.com/512/706/706830.png"
+              }
               alt="Profile"
               className="w-28 h-28 rounded-full border-4 border-green-100 shadow-sm mb-3"
             />
-            <h2 className="text-2xl font-bold text-gray-800">{profile.name}</h2>
-            <p className="text-gray-500 text-sm">{profile.department}</p>
+            <h2 className="text-2xl font-bold text-gray-800">
+              {profile?.name || "Unknown"}
+            </h2>
+            <p className="text-gray-500 text-sm">
+              {profile?.department || "Computer Science"}
+            </p>
             <div className="h-0.5 w-24 bg-green-400 mt-2 rounded-full"></div>
           </div>
 
           <div className="space-y-4 text-sm mt-6">
             <div>
               <p className="text-gray-500">Name</p>
-              <p className="font-medium">{profile.name}</p>
+              <p className="font-medium">{profile?.name}</p>
             </div>
             <div>
               <p className="text-gray-500">Department</p>
-              <p className="font-medium">{profile.department}</p>
+              <p className="font-medium">
+                {profile?.department || "Computer Science"}
+              </p>
             </div>
             <div>
               <p className="text-gray-500">Subject</p>
-              <p className="font-medium">{profile.subject}</p>
+              <p className="font-medium">{profile?.subject || "N/A"}</p>
             </div>
             <div>
               <p className="text-gray-500">Email</p>
-              <p className="font-medium">{profile.email}</p>
+              <p className="font-medium">{profile?.email}</p>
             </div>
             <div>
               <p className="text-gray-500">Phone</p>
-              <p className="font-medium">{profile.phone}</p>
+              <p className="font-medium">{profile?.phone || "N/A"}</p>
             </div>
           </div>
         </div>
@@ -64,24 +158,37 @@ const Profile = () => {
         {/* Right Column - Course Materials */}
         <div
           style={{ maxHeight: "550px" }}
-          className="bg-white rounded-2xl overflow-y-auto shadow-md p-6 flex-[2]"
+          className="bg-white rounded-2xl overflow-y-auto shadow-md p-6 flex-[2] relative"
         >
-          <h3 className="font-semibold text-gray-800 mb-6 text-lg">
-            Generated Course Materials
-          </h3>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-semibold text-gray-800 text-lg">
+              Generated Course Materials
+            </h3>
+            <IconButton
+              onClick={() => setOpen(true)}
+              sx={{
+                color: "#22c55e",
+                "&:hover": { color: "#16a34a" },
+              }}
+            >
+              <AddCircleOutline fontSize="large" />
+            </IconButton>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {materials.map((item, index) => (
               <div
                 key={index}
                 className="group relative border border-green-100 rounded-2xl p-5 bg-white shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-green-400"
               >
-              
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-green-500 rounded-t-2xl" />
 
                 <h4 className="font-semibold text-gray-800 group-hover:text-green-600 transition-colors">
-                  {item.title}
+                  {item.c_name}
                 </h4>
-                <p className="text-sm text-gray-500 mt-1">{item.date}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {item.createdAt || "N/A"}
+                </p>
                 <p className="text-xs text-gray-400 mt-1">
                   Generated by{" "}
                   <span className="text-green-500 font-medium">Gemini AI</span>
@@ -101,6 +208,131 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* 🟢 Edit Profile Modal */}
+      <Modal
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        aria-labelledby="edit-profile-modal"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "white",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 3,
+            width: 400,
+          }}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-800">
+              Edit Profile
+            </h2>
+            <IconButton
+              onClick={() => setEditOpen(false)}
+              sx={{ color: "gray" }}
+            >
+              <Close />
+            </IconButton>
+          </div>
+
+          <TextField
+            fullWidth
+            label="Mobile Number"
+            variant="outlined"
+            size="small"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+
+          <TextField
+            fullWidth
+            label="Subject"
+            variant="outlined"
+            size="small"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={handleProfileUpdate}
+            sx={{
+              backgroundColor: "#22c55e",
+              textTransform: "none",
+              fontWeight: 600,
+              "&:hover": {
+                backgroundColor: "#16a34a",
+              },
+            }}
+          >
+            Save Changes
+          </Button>
+        </Box>
+      </Modal>
+
+      {/* 🟢 Add Course Modal */}
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="add-course-modal"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "white",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 3,
+            width: 400,
+          }}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-800">
+              Add New Course
+            </h2>
+            <IconButton onClick={() => setOpen(false)} sx={{ color: "gray" }}>
+              <Close />
+            </IconButton>
+          </div>
+
+          <TextField
+            fullWidth
+            label="Course Name"
+            variant="outlined"
+            size="small"
+            value={courseName}
+            onChange={(e) => setCourseName(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={handleAddCourse}
+            sx={{
+              backgroundColor: "#22c55e",
+              textTransform: "none",
+              fontWeight: 600,
+              "&:hover": {
+                backgroundColor: "#16a34a",
+              },
+            }}
+          >
+            Add Course
+          </Button>
+        </Box>
+      </Modal>
     </div>
   );
 };

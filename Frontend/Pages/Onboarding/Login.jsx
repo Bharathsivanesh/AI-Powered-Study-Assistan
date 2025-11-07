@@ -3,6 +3,7 @@ import FormInput from "../../Components/InputFields";
 import GoogleIcon from "../../src/assets/google.png";
 import Button from "@mui/material/Button";
 import { Link, useNavigate } from "react-router-dom";
+import { loginStaff } from "../../Firebaseservices/Authservice";
 
 const LoginCard = () => {
   const [formData, setFormData] = useState({
@@ -10,11 +11,42 @@ const LoginCard = () => {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (field) => (e) => {
     setFormData({ ...formData, [field]: e.target.value });
   };
 
   const router = useNavigate();
+
+  const handleLogin = async () => {
+    if (!formData.email || !formData.password) {
+      // showtoast(
+      //   "error",
+      //   "Please fill all fields",
+      //   "Missing information",
+      //   "top"
+      // );
+      return;
+    }
+
+    setLoading(true);
+    const response = await loginStaff(formData.email, formData.password);
+    setLoading(false);
+
+    if (response.success) {
+      // showtoast(
+      //   "success",
+      //   "Login successful!",
+      //   `Welcome ${response.data.name} 😎`,
+      //   "top"
+      // );
+      localStorage.setItem("uid", response.data.uid);
+      router("/dashboard"); // redirect to dashboard
+    } else {
+      // showtoast("error", "Login failed", response.message, "top");
+    }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50">
@@ -56,9 +88,10 @@ const LoginCard = () => {
               fontWeight: 500,
               marginTop: 2,
             }}
-            onClick={() => router("/dashboard")}
+            onClick={handleLogin}
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </Button>
         </div>
 
