@@ -10,6 +10,9 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { apiService } from "../../Services/Apicall";
+import { getCourses, updateCourseWithQA } from "../../Firebaseservices/CourseService";
+import { Button, Card, CardContent, Grid, Modal, Box } from "@mui/material";
+import { Download } from "lucide-react";
 
 export default function SolveAi() {
   const [progress, setProgress] = useState(0);
@@ -21,7 +24,6 @@ export default function SolveAi() {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
 
-
     const validTypes = ["image/jpeg", "image/png", "image/jpg"];
     if (!validTypes.includes(selectedFile.type)) {
       alert("Only image files (jpg, jpeg, png) are allowed!");
@@ -32,7 +34,6 @@ export default function SolveAi() {
     setLoading(true);
     setProgress(0);
     setQaPairs([]);
-
 
     let value = 0;
     const interval = setInterval(() => {
@@ -69,11 +70,50 @@ export default function SolveAi() {
       setLoading(false);
     }
   };
+  const [materials, setMaterials] = useState([]);
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = async () => {
+    setOpen(true);
+    await FetchCourse();
+  };
+
+  const handleClose = () => setOpen(false);
+
+  const FetchCourse = async () => {
+    const response = await getCourses();
+    console.log("Courses fetched:", response?.message);
+    if (response.success) {
+      alert("✅ Course added successfully!", response?.message);
+      setMaterials(response?.message);
+    } else {
+      alert("❌ Failed to fetch course.");
+    }
+  };
+
+  const handleSelectCourse = async (courseId) => {
+    if (qaPairs.length === 0) {
+      alert("⚠️ No Q&A pairs available to upload!");
+      return;
+    }
+
+    try {
+      const result = await updateCourseWithQA(courseId, qaPairs);
+      if (result.success) {
+        alert("✅ Q&A successfully added to course!");
+        setOpen(false);
+      } else {
+        alert("❌ Failed to update course with Q&A.");
+      }
+    } catch (error) {
+      console.error("Firestore update error:", error);
+      alert("⚠️ Something went wrong while updating Firestore.");
+    }
+  };
 
   return (
     <div className="w-full flex justify-center">
       <div className="max-w-6xl py-8 w-full grid md:grid-cols-2 gap-8">
-
         <div className="flex flex-col">
           <h2 className="text-3xl font-bold mb-4 text-green-500">
             Upload Question Image
@@ -175,9 +215,115 @@ export default function SolveAi() {
                 Upload an image to generate Q&A pairs.
               </Typography>
             )}
+            <button
+              onClick={handleOpen}
+              className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 justify-center transition"
+            >
+              <Download className="w-5 h-5" />
+              Upload Quetsion & Answer
+            </button>
           </div>
         </div>
       </div>
+      <Modal open={open} onClose={handleClose}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "50%",
+            maxHeight: "80vh",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: 3,
+            p: 4,
+            overflowY: "auto",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 3,
+              textAlign: "center",
+              fontWeight: "bold",
+              color: "#16a34a",
+            }}
+          >
+            Select a Course to Attach PDF
+          </Typography>
+
+          <Grid container spacing={3}>
+            {materials.length > 0 ? (
+              materials.map((item) => (
+                <Grid item xs={12} sm={6} md={4} key={item.id}>
+                  <Card
+                    sx={{
+                      borderRadius: 3,
+                      boxShadow: 3,
+                      border: "1px solid #e5e7eb",
+                      minWidth: 300,
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        boxShadow: 6,
+                        transform: "translateY(-4px) scale(1.02)",
+                        borderColor: "#16a34a",
+                      },
+                    }}
+                  >
+                    <CardContent sx={{ textAlign: "center", p: 3 }}>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          color: "#16a34a",
+                          fontWeight: 700,
+                          mb: 1,
+                          letterSpacing: 0.3,
+                        }}
+                      >
+                        {item.c_name}
+                      </Typography>
+
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "#6b7280",
+                          mb: 2,
+                        }}
+                      >
+                        {item.createdAt}
+                      </Typography>
+
+                      <Button
+                        variant="contained"
+                        onClick={() => handleSelectCourse(item.C_ID)}
+                        sx={{
+                          textTransform: "none",
+                          fontWeight: 600,
+                          backgroundColor: "#16a34a",
+                          borderRadius: 2,
+                          px: 3,
+                          "&:hover": {
+                            backgroundColor: "#15803d",
+                          },
+                        }}
+                      >
+                        Select
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))
+            ) : (
+              <Typography
+                sx={{ textAlign: "center", color: "gray", width: "100%" }}
+              >
+                No courses found
+              </Typography>
+            )}
+          </Grid>
+        </Box>
+      </Modal>
     </div>
   );
 }

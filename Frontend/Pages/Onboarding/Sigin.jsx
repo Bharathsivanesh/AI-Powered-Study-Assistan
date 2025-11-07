@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import FormInput from "../../Components/InputFields";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
+import { signUpStaff } from "../../Firebaseservices/Authservice";
 
 const SignUpCard = () => {
   const [formData, setFormData] = useState({
@@ -15,16 +16,35 @@ const SignUpCard = () => {
     setFormData({ ...formData, [field]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    // Add signup logic here
+
+    if (!formData.name || !formData.email || !formData.password) {
+      // showtoast("error", "Please fill all fields");
+      return;
+    }
+
+    const response = await signUpStaff({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (response.success) {
+      // showtoast("success", response.message, "Welcome " + formData.name, "top");
+      setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+      // Optionally redirect to login page
+    } else {
+      // showtoast("error", response.message, "Signup failed", "top");
+    }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50">
       <div className="bg-white shadow-md rounded-2xl p-8 w-full max-w-sm">
-        <h2 className="text-2xl font-semibold text-center mb-2">Create Account</h2>
+        <h2 className="text-2xl font-semibold text-center mb-2">
+          Create Account
+        </h2>
         <p className="text-gray-500 text-center mb-6">
           Sign up for your Study Assistant
         </p>
@@ -35,26 +55,24 @@ const SignUpCard = () => {
             label="Full Name"
             value={formData.name}
             onChange={handleChange("name")}
-             variant="standard"
+            variant="standard"
             color="success"
           />
           <FormInput
             type="email"
             label="Email address"
             value={formData.email}
-              variant="standard"
+            variant="standard"
             color="success"
             onChange={handleChange("email")}
-            
           />
           <FormInput
             type="password"
             label="Password"
-              variant="standard"
+            variant="standard"
             color="success"
             value={formData.password}
             onChange={handleChange("password")}
-           
           />
 
           <Button
