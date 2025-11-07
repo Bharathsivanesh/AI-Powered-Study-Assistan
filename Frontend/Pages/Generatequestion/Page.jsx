@@ -197,19 +197,20 @@ const GenerateQuestion = () => {
     }
   };
   const handleSelectCourse = (courseId) => {
-    // open file input when button clicked
+   
     fileInputRef.current.click();
 
-    // dynamically set listener for this specific courseId
+    
     fileInputRef.current.onchange = (event) =>
       handleFileChange(event, courseId);
   };
   return (
     <div
-      className={`min-h-screen flex ${
-        hasQuestions ? "flex-row" : "items-start justify-center"
+      className={`min-h-screen flex flex-col md:flex-row ${
+        hasQuestions ? "md:flex-row" : "items-start justify-center"
       }`}
     >
+      {/* Hidden file input */}
       <input
         type="file"
         accept="application/pdf"
@@ -219,18 +220,20 @@ const GenerateQuestion = () => {
 
       {/* LEFT SIDE - Upload Section */}
       <div
-        className={`${hasQuestions ? "w-3/5 p-10" : "w-full max-w-3xl p-10"}`}
+        className={`${
+          hasQuestions ? "md:w-3/5" : "w-full max-w-3xl"
+        } p-6 md:p-10 mx-auto md:mx-0`}
       >
-        <h1 className="text-3xl font-bold text-green-500 mb-2 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold text-green-500 mb-2 text-center md:text-left">
           Generate Study Questions
         </h1>
-        <p className="text-gray-600 mb-8 text-center">
+        <p className="text-gray-600 mb-6 text-center md:text-left">
           Upload your syllabus and let AI generate topic-wise questions for you.
         </p>
 
         {/* Upload Box */}
-        <div className="bg-white border-2 border-dashed border-gray-300 rounded-2xl p-10 flex flex-col items-center justify-center shadow-sm mb-8">
-          <Upload className="w-12 h-12 text-green-500 mb-3" />
+        <div className="bg-white border-2 border-dashed border-gray-300 rounded-2xl p-6 sm:p-10 flex flex-col items-center justify-center shadow-sm mb-6">
+          <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-green-500 mb-3" />
           <p className="text-gray-600 mb-2 text-center">
             Drag & drop your file here or click to upload
           </p>
@@ -240,13 +243,13 @@ const GenerateQuestion = () => {
 
           <label className="cursor-pointer">
             <input type="file" className="hidden" onChange={handleFileUpload} />
-            <span className="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 transition">
+            <span className="bg-green-600 text-white px-4 sm:px-5 py-2 rounded-lg shadow hover:bg-green-700 transition text-sm sm:text-base">
               Choose File
             </span>
           </label>
 
           {file && (
-            <p className="text-sm text-green-700 mt-4 font-medium">
+            <p className="text-sm text-green-700 mt-4 font-medium text-center">
               Uploaded: {file.name}
             </p>
           )}
@@ -254,31 +257,33 @@ const GenerateQuestion = () => {
 
         {/* Progress Bar */}
         {isGenerating && (
-          <div className="bg-gray-200 rounded-full h-4">
+          <div className="bg-gray-200 rounded-full h-3 sm:h-4 mb-4">
             <div
-              className="bg-green-500 h-4 rounded-full transition-all duration-500"
+              className="bg-green-500 h-3 sm:h-4 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
         )}
+
         <button
           onClick={handleOpen}
-          className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 justify-center transition"
+          className="bg-green-500 mt-4 md:mt-0 hover:bg-green-600 text-white px-4 sm:px-5 py-2 sm:py-3 rounded-xl shadow-md flex items-center gap-2 justify-center transition w-full md:w-auto"
         >
-          <Download className="w-5 h-5" /> Upload PDF questions To Course
+          <Download className="w-4 h-4 sm:w-5 sm:h-5" /> Upload PDF questions To
+          Course
         </button>
       </div>
 
-      {/* RIGHT SIDE - Generated Questions (only visible after success) */}
+      {/* RIGHT SIDE - Generated Questions */}
       {hasQuestions && (
         <motion.div
-          className="w-[40%] h-screen bg-white shadow-inner flex flex-col border-l border-gray-200 overflow-y-auto"
+          className="w-full md:w-2/5 h-auto md:h-screen bg-white shadow-inner flex flex-col border-t md:border-t-0 md:border-l border-gray-200 overflow-y-auto"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="p-8 pt-6 flex-1 overflow-y-auto">
-            <h2 className="text-xl font-semibold text-green-700 mb-4 text-center">
+          <div className="p-6 md:p-8 flex-1 overflow-y-auto">
+            <h2 className="text-xl font-semibold text-green-700 mb-4 text-center md:text-left">
               Generated Questions
             </h2>
 
@@ -302,25 +307,28 @@ const GenerateQuestion = () => {
               ))}
             </ul>
 
-            <div className="flex flex-col gap-3 mt-6">
+            <div className="flex flex-col sm:flex-row gap-3 mt-6">
               <button
                 onClick={handleDownloadSelected}
-                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 justify-center transition"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-2 rounded-xl shadow-md flex items-center gap-2 justify-center w-full sm:w-auto"
               >
-                <Download className="w-5 h-5" /> Download Selected Topic
+                <Download className="w-4 h-4 sm:w-5 sm:h-5" /> Download Selected
+                Topic
               </button>
 
               <button
                 onClick={handleDownloadAll}
-                className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl shadow-md flex items-center gap-2 justify-center transition"
+                className="bg-green-500 hover:bg-green-600 text-white px-4 sm:px-5 py-2 rounded-xl shadow-md flex items-center gap-2 justify-center w-full sm:w-auto"
               >
-                <Download className="w-5 h-5" /> Download All Topics
+                <Download className="w-4 h-4 sm:w-5 sm:h-5" /> Download All
+                Topics
               </button>
             </div>
           </div>
         </motion.div>
       )}
 
+      {/* Modal for selecting course */}
       <Modal open={open} onClose={handleClose}>
         <Box
           sx={{
@@ -328,7 +336,7 @@ const GenerateQuestion = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "50%",
+            width: { xs: "90%", sm: "70%", md: "50%" },
             maxHeight: "80vh",
             bgcolor: "background.paper",
             boxShadow: 24,
@@ -382,10 +390,7 @@ const GenerateQuestion = () => {
 
                       <Typography
                         variant="body2"
-                        sx={{
-                          color: "#6b7280",
-                          mb: 2,
-                        }}
+                        sx={{ color: "#6b7280", mb: 2 }}
                       >
                         {item.createdAt}
                       </Typography>
@@ -399,9 +404,7 @@ const GenerateQuestion = () => {
                           backgroundColor: "#16a34a",
                           borderRadius: 2,
                           px: 3,
-                          "&:hover": {
-                            backgroundColor: "#15803d",
-                          },
+                          "&:hover": { backgroundColor: "#15803d" },
                         }}
                       >
                         Select
