@@ -24,7 +24,7 @@ export const signUpStaff = async ({ name, email, password }) => {
 
     return {
       success: true,
-      message: "Signup successful!",
+      message: "Signup successfull!",
       data: { uid, name, email },
     };
   } catch (err) {
@@ -54,7 +54,7 @@ export const loginStaff = async (email, password) => {
       const staffData = querySnapshot.docs[0].data();
       return {
         success: true,
-        message: "Login successful",
+        message: "Login successfull",
         data: {
           ...staffData,
           uid,

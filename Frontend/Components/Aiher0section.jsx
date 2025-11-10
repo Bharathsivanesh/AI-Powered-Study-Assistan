@@ -5,7 +5,7 @@ function AIHeroSection() {
   return (
     <div className="relative mb-10">
       <div className="flex flex-col md:flex-row items-center justify-between gap-12">
-        {/* Left side - Image */}
+       
         <motion.img
           src={aii}
           alt="AI Illustration"
@@ -15,7 +15,7 @@ function AIHeroSection() {
           transition={{ duration: 1 }}
         />
 
-        {/* Right side - Animated text */}
+       
         <motion.div
           className="md:w-1/2 text-center md:text-left"
           initial={{ opacity: 0, x: 60 }}
@@ -40,7 +40,7 @@ function AIHeroSection() {
             personalized insights — all powered by AI.
           </motion.p>
 
-          {/* Animated text instead of button */}
+        
           <motion.div
             className="mt-8 text-green-600 text-xl font-semibold tracking-wide"
             animate={{
