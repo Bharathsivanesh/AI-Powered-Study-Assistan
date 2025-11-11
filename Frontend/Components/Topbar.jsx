@@ -44,7 +44,7 @@ const Topbar = ({ onLogout, onMenuClick }) => {
 
   return (
     <div className="flex justify-between items-center bg-white shadow px-4 py-3 flex-wrap gap-3">
-      {/* Hamburger menu for mobile */}
+    
       <button className="lg:hidden text-green-500" onClick={onMenuClick}>
         <Menu fontSize="large" />
       </button>
