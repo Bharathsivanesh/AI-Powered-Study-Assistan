@@ -8,8 +8,9 @@ import {
   ChatBubbleOutline,
 } from "@mui/icons-material";
 import { Modal, Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const Topbar = ({ onLogout, onMenuClick }) => {
+const Topbar = ({ onMenuClick }) => {
   const [open, setOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [message, setMessage] = useState("");
@@ -42,9 +43,13 @@ const Topbar = ({ onLogout, onMenuClick }) => {
     setMessage("");
   };
 
+  const router = useNavigate();
+  const onLogout = () => {
+    localStorage.clear();
+    router("/");
+  };
   return (
     <div className="flex justify-between items-center bg-white shadow px-4 py-3 flex-wrap gap-3">
-    
       <button className="lg:hidden text-green-500" onClick={onMenuClick}>
         <Menu fontSize="large" />
       </button>
