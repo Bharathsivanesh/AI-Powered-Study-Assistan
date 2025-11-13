@@ -1,37 +1,52 @@
-Key Information about the Website:
+AI-Powered Study Assistant Knowledge Base
 
-1. **Purpose**: This is an AI-Powered Study Assistant platform designed to help students with their studies.
+1. Dashboard:
+- Teachers and staff can access the main dashboard after login.
+- Dashboard shows analytics, notifications, and summary of uploaded courses, questions, and answers.
 
-2. **Main Features**:
-   - AI Chatbot: Interactive chatbot that helps answer study-related questions
-   - Question Generation: Generate practice questions based on study materials
-   - Solve with AI: Get AI-powered solutions to problems
-   - AI Assistant: General-purpose study assistant
-   - Recommendations: Get personalized study recommendations
-   - Profile Management: Manage user profile and settings
+2. Generate Questions:
+- Teachers can create a course and upload syllabus PDFs.
+- AI generates questions based on the uploaded syllabus.
+- Questions can be downloaded topic-wise or as a complete PDF.
+- This section is for uploading syllabus and generating study questions for students.
 
-3. **User Authentication**:
-   - Users can sign in and sign up to access the platform
-   - Authentication is required to use most features
+3. Solve with AI:
+- Teachers can upload question papers.
+- AI generates answers automatically.
+- Generated answers can be downloaded as PDFs.
+- Teachers can upload these question-answer PDFs to courses, and students can access them via the app.
 
-4. **Payment**:
-   - The platform supports payments (via Razorpay integration)
-   - Users may need to subscribe or make payments for premium features
+4. AI Chat Assistant:
+- Staff and students can interact with the AI assistant to clarify doubts.
+- The AI assistant provides guidance based on the platform’s features, e.g., how to create a course, upload syllabus, or check analytics.
 
-5. **Technology Stack**:
-   - Frontend: React with Vite
-   - Backend: Django (Python) and Go microservices
-   - The bot service is built with Go
+5. AI Recommendation:
+- Upload multiple question papers to analyze student performance and topic coverage.
+- AI generates charts showing most repeated topics and recommendations for teachers and students.
+- Analytics helps teachers identify important topics and improve study material.
 
-6. **How to Use**:
-   - Users can interact with the AI chatbot through the chat interface
-   - Submit questions and receive AI-generated responses
-   - Generate study questions based on uploaded content
-   - Get step-by-step solutions to problems
-   - Receive personalized study recommendations
+6. Profile:
+- Teachers and staff can update their profile information.
+- Profile includes staff details, courses created, and uploaded content.
+- Students can view teacher details and course info.
 
-When answering questions:
-- Always base your responses on this knowledge about the website
-- Be helpful, clear, and concise
-- If a question is outside the scope of the website, politely redirect the user
-- Use natural, friendly language
+7. Notifications:
+- Students sending doubts triggers notifications to teachers.
+- Teachers replying triggers notifications to students.
+- Notifications are visible on the top bar of the dashboard.
+
+8. Sample FAQs:
+- Q: How do I create a course?
+  A: Go to Profile section there create course and  → Generate Questions → Upload syllabus PDF → AI generates questions → Save course. Students can access the uploaded questions and answers in their app.
+
+- Q: How do I generate AI answers for a question paper?
+  A: Go to Solve with AI → Upload your question paper → AI generates answers → Download the answer PDF → Add it to the course.
+
+- Q: How can I get analytics on topics?
+  A: Go to AI Recommendation → Upload multiple question papers → AI generates charts with most repeated topics and suggested focus areas.
+
+- Q: How can a student clarify doubts?
+  A: Students can chat with AI Chat Assistant or submit doubts → Notifications go to teachers → Teacher replies → Students get notifications.
+
+- Q: Where can I check staff or course details?
+  A: Go to Profile → View your profile and all uploaded courses and content.
