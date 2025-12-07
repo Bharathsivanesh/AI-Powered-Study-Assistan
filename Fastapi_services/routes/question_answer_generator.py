@@ -7,14 +7,14 @@ import pytesseract
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-
+import requests
 
 load_dotenv()
 
 router = APIRouter(prefix="/qa", tags=["Question Answer Generator"])
 
 # ✅ Gemini Setup
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyAHOjVuJH8h30ZmuYFdjFnS6UM9SADju3w")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyAwRu4wiSJTCv6fPATLTN9yp_lb-3wSnAY")
 if not GEMINI_API_KEY:
     raise RuntimeError("❌ GEMINI_API_KEY not found in .env")
 
@@ -29,12 +29,30 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 
 def extract_text_from_image(file_path: str) -> str:
     """Extracts text from uploaded image using OCR."""
+    # try:
+    #     img = Image.open(file_path)
+    #     text = pytesseract.image_to_string(img)
+    #     return text.strip()
+    # except Exception as e:
+    #     raise HTTPException(status_code=400, detail=f"Error reading image: {e}")
     try:
-        img = Image.open(file_path)
-        text = pytesseract.image_to_string(img)
-        return text.strip()
+        with open(file_path, "rb") as f:
+            response = requests.post(
+                "https://api.ocr.space/parse/image",
+                files={"file": f},
+                data={
+                    "apikey": "K82962867588957",  # Replace later with real API key
+                    "language": "eng",
+                    "scale": True,
+                    "OCREngine": 2
+                }
+            )
+
+        result = response.json()
+        return result["ParsedResults"][0]["ParsedText"].strip()
+
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error reading image: {e}")
+        raise HTTPException(status_code=400, detail=f"OCR Error: {e}")
 
 
 def clean_text(text: str) -> str:
@@ -82,7 +100,7 @@ def generate_qa_from_text(prompt: str):
     try:
         contents = [types.Content(role="user", parts=[types.Part(text=prompt)])]
         response = client.models.generate_content(
-            model="gemini-2.5-pro",
+            model="gemini-2.5-flash",
             contents=contents,
         )
         return response.text.strip()

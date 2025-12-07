@@ -70,7 +70,7 @@ Syllabus:
         # Step 4: Send to Gemini API
         contents = [types.Content(role="user", parts=[types.Part.from_text(text=prompt)])]
         response = client.models.generate_content(
-            model="gemini-2.5-pro",
+            model="gemini-2.5-flash",
             contents=contents,
         )
 
