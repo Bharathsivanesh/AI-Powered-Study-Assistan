@@ -14,7 +14,7 @@ load_dotenv()
 router = APIRouter(prefix="/qa", tags=["Question Answer Generator"])
 
 # ✅ Gemini Setup
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyAwRu4wiSJTCv6fPATLTN9yp_lb-3wSnAY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     raise RuntimeError("❌ GEMINI_API_KEY not found in .env")
 
