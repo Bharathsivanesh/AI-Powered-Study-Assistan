@@ -12,11 +12,11 @@ from PyPDF2 import PdfReader
 load_dotenv()
 import requests
 
-
+load_dotenv()
 router = APIRouter(prefix="/analyze", tags=["Topic Analyzer"])
 
 # ✅ Gemini API Setup
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyDf94AURysZ__VT2kuZzQOJ6JpPhY9vYDY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     raise RuntimeError("❌ GEMINI_API_KEY not found in .env")
 
