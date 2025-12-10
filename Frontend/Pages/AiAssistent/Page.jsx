@@ -6,6 +6,7 @@ import { Send, Bot, User } from "lucide-react";
 import { apiService } from "../../Services/Apicall";
 
 const AiAssistent = () => {
+  const apiUrl = import.meta.env.VITE_API_KEY;
   const [messages, setMessages] = useState([
     { id: 1, text: "Hi there! How can I help you today?", isBot: true },
     {
@@ -48,7 +49,7 @@ const AiAssistent = () => {
         ],
       },
       headers: {
-        "X-Goog-Api-Key": "AIzaSyAjXm95cujZ0rQj66pTh5kEZCVqjHKlCB8",
+        "X-Goog-Api-Key": apiUrl,
       },
       onSuccess: (data) => {
         setTimeout(() => {
