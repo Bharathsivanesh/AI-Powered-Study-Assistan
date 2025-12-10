@@ -34,8 +34,8 @@
 // };
 import axios from "axios";
 
-const BASE_URL = " https://ai-powered-study-assistan-1.onrender.com";
-// const BASE_URL = "http://127.0.0.1:8000";
+// const BASE_URL = " https://ai-powered-study-assistan-1.onrender.com";
+const BASE_URL = "http://127.0.0.1:8000";
 
 export const apiService = async ({
   endpoint,
