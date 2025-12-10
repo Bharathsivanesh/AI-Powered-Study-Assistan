@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from .routes import ai_knowledge,question_generator,question_answer_generator,topic_analysis
 from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv()
+env_path = Path(__file__).resolve().parent / ".env"
+load_dotenv(env_path)
 app = FastAPI(title="AI Study Assistant (FastAPI)")
 app.add_middleware(
     CORSMiddleware,

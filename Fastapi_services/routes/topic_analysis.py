@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from PyPDF2 import PdfReader
-load_dotenv()
 import requests
 
 load_dotenv()
