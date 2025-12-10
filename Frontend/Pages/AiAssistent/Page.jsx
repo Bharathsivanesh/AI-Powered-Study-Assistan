@@ -49,7 +49,7 @@ const AiAssistent = () => {
         ],
       },
       headers: {
-        "X-Goog-Api-Key": apiUrl,
+        "X-Goog-Api-Key": import.meta.env.VITE_API_KEY,
       },
       onSuccess: (data) => {
         setTimeout(() => {
