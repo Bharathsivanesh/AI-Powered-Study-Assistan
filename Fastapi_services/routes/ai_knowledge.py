@@ -47,7 +47,7 @@ User Question:
     try:
         contents = [types.Content(role="user", parts=[types.Part.from_text(text=prompt)])]
         response = client.models.generate_content(
-            model="gemini-2.5-pro",
+            model="gemini-2.5-flash",
             contents=contents,
         )
         return {"answer": response.text.strip()}
