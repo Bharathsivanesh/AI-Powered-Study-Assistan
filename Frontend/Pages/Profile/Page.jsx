@@ -24,6 +24,7 @@ import {
   updateStaffDetails,
 } from "../../Firebaseservices/StaffService";
 import Loader from "../../Components/Loader";
+import { apiService } from "../../Services/Apicall";
 
 const Profile = () => {
   const [open, setOpen] = useState(false); // course modal
@@ -82,6 +83,17 @@ const Profile = () => {
 
     if (response.success) {
       alert("✅ Course added successfully!");
+      const notificationPayload = {
+        title: "New Course Added 📚",
+        body: `A new course "${courseName}" has been added by ${profile?.name || "Staff"}. Check it out!`,
+      };
+
+      await apiService({
+        endpoint: "https://firebasefcm.onrender.com/send-to-all",
+        method: "POST",
+        fullUrl: true,
+        payload: notificationPayload,
+      });
       setCourseName("");
       setOpen(false);
       fetchCourse();

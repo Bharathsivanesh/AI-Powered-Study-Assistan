@@ -29,7 +29,7 @@ const Sidebar = ({ open, toggleSidebar }) => {
         ${open ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
     >
       <img
-        src="../src/assets/logo1.png"
+        src="/logo1.png"
         alt="Logo"
         className="w-16 h-20 mx-auto mb-6"
       />
