@@ -5,7 +5,8 @@ import Button from "@mui/material/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { loginStaff } from "../../Firebaseservices/Authservice";
 import Loader from "../../Components/Loader";
-
+import { toast } from "react-toastify";
+import { showToast } from "../../Components/Notification";
 const LoginCard = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -22,12 +23,7 @@ const LoginCard = () => {
 
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
-      // showtoast(
-      //   "error",
-      //   "Please fill all fields",
-      //   "Missing information",
-      //   "top"
-      // );
+      showToast("Please Fill All the Fields", "warning");
       return;
     }
 
@@ -35,16 +31,11 @@ const LoginCard = () => {
     const response = await loginStaff(formData.email, formData.password);
 
     if (response.success) {
-      // showtoast(
-      //   "success",
-      //   "Login successful!",
-      //   `Welcome ${response.data.name} 😎`,
-      //   "top"
-      // );
+      showToast("Login successful!", "success");
       localStorage.setItem("uid", response.data.uid);
       router("/dashboard"); // redirect to dashboard
     } else {
-      // showtoast("error", "Login failed", response.message, "top");
+      showToast("Login failed", "error");
     }
     setLoading(false);
   };

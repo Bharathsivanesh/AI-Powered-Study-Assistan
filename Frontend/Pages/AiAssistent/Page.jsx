@@ -4,9 +4,11 @@
 import { useState } from "react";
 import { Send, Bot, User } from "lucide-react";
 import { apiService } from "../../Services/Apicall";
-
+import Loader from "react-js-loader";
+import { showToast } from "../../Components/Notification";
 const AiAssistent = () => {
   const apiUrl = import.meta.env.VITE_API_KEY;
+  const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([
     { id: 1, text: "Hi there! How can I help you today?", isBot: true },
     {
@@ -32,6 +34,7 @@ const AiAssistent = () => {
 
   const Getairesponse = async (query) => {
     console.log("Query:", query);
+    setLoading(true);
     await apiService({
       endpoint:
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
@@ -59,9 +62,14 @@ const AiAssistent = () => {
             isBot: true,
           };
           setMessages((prev) => [...prev, botResponse]);
+          setLoading(false);
         }, 1000);
       },
-      onError: (err) => console.error(err),
+      onError: (err) => {
+        // console.error(err);
+        showToast("❌ Error: Could not reach server.", "error");
+        setLoading(false);
+      },
     });
   };
 
@@ -107,6 +115,16 @@ const AiAssistent = () => {
                 </div>
               </div>
             ))}
+            {loading && (
+              <div className="flex justify-start">
+                <Loader
+                  type="bubble-top"
+                  bgColor="#22C55E"
+                  color="#22C55E"
+                  size={30}
+                />
+              </div>
+            )}
           </div>
 
           {/* Input Area */}

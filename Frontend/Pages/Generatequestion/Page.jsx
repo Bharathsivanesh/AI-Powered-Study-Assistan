@@ -18,6 +18,7 @@ import {
   Box,
 } from "@mui/material";
 import Loader from "../../Components/Loader";
+import { showToast } from "../../Components/Notification";
 
 const GenerateQuestion = () => {
   const [file, setFile] = useState(null);
@@ -32,7 +33,7 @@ const GenerateQuestion = () => {
   const handleFileUpload = async (e) => {
     const uploadedFile = e.target.files[0];
     if (!uploadedFile) return;
-
+    setLoading(true);
     setFile(uploadedFile);
     setIsGenerating(true);
     setProgress(0);
@@ -62,14 +63,19 @@ const GenerateQuestion = () => {
       setSelectedTopic(topicKeys[0]);
       setAllQuestions(parsedData);
       setQuestions(parsedData[topicKeys[0]]);
+      setLoading(false);
+      showToast("The Questions Is Generated Successfully!", "success");
     } catch (error) {
       clearInterval(interval);
       setIsGenerating(false);
-      alert(
+
+      showToast(
         "Error generating questions: " +
-          (error.response?.data?.detail || error.message)
+          (error?.response?.data?.detail || error?.message),
+        "error"
       );
-      console.error(error);
+
+      setLoading(false);
     }
   };
 
@@ -175,8 +181,9 @@ const GenerateQuestion = () => {
     console.log("Courses fetched:", response?.message);
     if (response.success) {
       setMaterials(response?.message);
+      showToast("Courses fetched successfully!", "success");
     } else {
-      alert("❌ Failed to fetch course.");
+      showToast("Failed to fetch courses", "error");
     }
     setLoading(false);
   };
@@ -188,13 +195,13 @@ const GenerateQuestion = () => {
     try {
       const result = await uploadPDFToCourse(file, courseId);
       if (result.success) {
-        alert("✅ PDF uploaded successfully!");
+        showToast("PDF uploaded successfully!", "success");
       } else {
-        alert("❌ Upload failed: " + result.message);
+        showToast("Error uploading PDF", "error");
       }
     } catch (error) {
       console.error(error);
-      alert("❌ Error uploading PDF");
+      showToast("❌ Error uploading PDF", "error");
     } finally {
       if (setOpen) setOpen(false);
       setLoading(false);

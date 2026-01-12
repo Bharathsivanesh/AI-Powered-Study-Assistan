@@ -20,6 +20,8 @@ import { Bar } from "react-chartjs-2";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { apiService } from "../../Services/Apicall";
+import { showToast } from "../../Components/Notification";
+import Loader from "../../Components/Loader";
 
 ChartJS.register(
   CategoryScale,
@@ -31,6 +33,7 @@ ChartJS.register(
 );
 
 const Recommendation = () => {
+  const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [topics, setTopics] = useState([]);
   const [frequencies, setFrequencies] = useState([]);
@@ -44,10 +47,10 @@ const Recommendation = () => {
 
   const handleUpload = async () => {
     if (selectedFiles.length === 0) {
-      alert("Please upload at least one image file.");
+      showToast("Please upload at least one image file.", "error");
       return;
     }
-
+    setLoading(true);
     setAnalyzing(true);
     const formData = new FormData();
     selectedFiles.forEach((file) => formData.append("files", file));
@@ -63,13 +66,15 @@ const Recommendation = () => {
           setTopics(result.topics || []);
           setFrequencies(result.frequencies || []);
           setTopQuestions(result.topQuestions || []);
+          showToast("Analysis complete!", "success");
         },
         onError: (err) => console.error("❌ API Error:", err),
       });
     } catch (error) {
-      console.error("❌ Upload failed:", error);
+      showToast("An error occurred during analysis.", "error");
     } finally {
       setAnalyzing(false);
+      setLoading(false);
     }
   };
 
@@ -106,7 +111,7 @@ const Recommendation = () => {
 
   return (
     <Box className="flex flex-col items-center">
-      
+      <Loader visible={loading} />
       <Box className="w-full max-w-6xl flex justify-between items-center py-6">
         <Typography variant="h5" fontWeight="bold" sx={{ color: "#22c55e" }}>
           StudySmart AI – Repeated Question Analyzer

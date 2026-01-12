@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import { signUpStaff } from "../../Firebaseservices/Authservice";
 import Loader from "../../Components/Loader";
+import { showToast } from "../../Components/Notification";
 
 const SignUpCard = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ const SignUpCard = () => {
     e.preventDefault();
 
     if (!formData.name || !formData.email || !formData.password) {
-      // showtoast("error", "Please fill all fields");
+      showToast("Please Fill All the Fields", "warning");
       return;
     }
     setLoading(true);
@@ -33,11 +34,11 @@ const SignUpCard = () => {
     });
 
     if (response.success) {
-      // showtoast("success", response.message, "Welcome " + formData.name, "top");
+      showToast("Signup successful!", "success");
       setFormData({ name: "", email: "", password: "", confirmPassword: "" });
       // Optionally redirect to login page
     } else {
-      // showtoast("error", response.message, "Signup failed", "top");
+      showToast("Signup failed", "error");
     }
     setLoading(false);
   };

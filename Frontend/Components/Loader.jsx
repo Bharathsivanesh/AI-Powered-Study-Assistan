@@ -33,7 +33,7 @@ const Loader = ({ visible }) => {
 
         <Box
           component="img"
-          src="../src/assets/ai.jpg"
+          src="/ai.jpg"
           alt="Logo"
           sx={{
             width: 100,
