@@ -25,6 +25,7 @@ import {
 } from "../../Firebaseservices/StaffService";
 import Loader from "../../Components/Loader";
 import { apiService } from "../../Services/Apicall";
+import { showToast } from "../../Components/Notification";
 
 const Profile = () => {
   const [open, setOpen] = useState(false); // course modal
@@ -32,7 +33,7 @@ const Profile = () => {
   const [courseName, setCourseName] = useState("");
   const [materials, setMaterials] = useState([]);
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Editable fields
   const [mobile, setMobile] = useState("");
@@ -66,11 +67,11 @@ const Profile = () => {
       subject: subject,
     });
     if (res.success) {
-      alert("✅ Profile updated successfully!");
+      showToast("Profile updated successfully!", "success");
       setEditOpen(false);
       fetchProfile();
     } else {
-      alert("❌ Update failed: " + res.message);
+      showToast("Update failed: " + res.message, "error");
     }
     setLoading(false);
   };
@@ -82,10 +83,12 @@ const Profile = () => {
     const response = await addCourse(courseData);
 
     if (response.success) {
-      alert("✅ Course added successfully!");
+      showToast("Course added successfully!", "success");
       const notificationPayload = {
         title: "New Course Added 📚",
-        body: `A new course "${courseName}" has been added by ${profile?.name || "Staff"}. Check it out!`,
+        body: `A new course "${courseName}" has been added by ${
+          profile?.name || "Staff"
+        }. Check it out!`,
       };
 
       await apiService({
@@ -98,7 +101,7 @@ const Profile = () => {
       setOpen(false);
       fetchCourse();
     } else {
-      alert("❌ Failed to add course.");
+      showToast("❌ Failed to add course.", "error");
     }
     setLoading(false);
   };
@@ -115,17 +118,15 @@ const Profile = () => {
   };
 
   const handleDeleteCourse = async (courseId) => {
-    if (window.confirm("Are you sure you want to delete this course?")) {
-      setLoading(true);
-      const res = await deleteCourse(courseId);
-      if (res.success) {
-        alert("✅ Course deleted successfully!");
-        fetchCourse();
-      } else {
-        alert("❌ Failed to delete course: " + res.message);
-      }
-      setLoading(false);
+    setLoading(true);
+    const res = await deleteCourse(courseId);
+    if (res.success) {
+      showToast("Course deleted successfully!", "success");
+      fetchCourse();
+    } else {
+      showToast("Failed to delete course: " + res.message, "error");
     }
+    setLoading(false);
   };
 
   return (
@@ -208,7 +209,7 @@ const Profile = () => {
               </IconButton>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1  md:grid-cols-2 gap-6">
               {materials.map((item, index) => (
                 <div
                   key={index}

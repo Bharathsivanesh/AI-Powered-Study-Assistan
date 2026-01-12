@@ -219,6 +219,7 @@ import {
   listenToChatMessages,
   sendStaffMessage,
 } from "../Firebaseservices/staffChatService";
+import Loader from "./Loader";
 
 const Topbar = ({ onMenuClick }) => {
   const [open, setOpen] = useState(false);
@@ -226,7 +227,7 @@ const Topbar = ({ onMenuClick }) => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const staffUid = localStorage.getItem("uid"); // staff auth uid
   const router = useNavigate();
   const formatTime = (timestamp) => {
@@ -273,19 +274,20 @@ const Topbar = ({ onMenuClick }) => {
   /* 📤 Send message */
   const handleSend = async () => {
     if (!message.trim() || !selectedStudent) return;
-
+    setLoading(true);
     await sendStaffMessage({
       chatId: selectedStudent.chatId,
       text: message,
       staffUid,
       studentId: selectedStudent.studentId,
     });
-
+    setLoading(false);
     setMessage("");
   };
 
   return (
     <div className="flex justify-between items-center bg-white shadow px-4 py-3 gap-3">
+      <Loader visible={loading} />
       <button className="lg:hidden text-green-500" onClick={onMenuClick}>
         <Menu fontSize="large" />
       </button>
@@ -299,10 +301,10 @@ const Topbar = ({ onMenuClick }) => {
           className="text-green-500 cursor-pointer"
           onClick={handleOpen}
         />
-        <AccountCircle className="text-green-500" />
+        <AccountCircle className="text-green-500 cursor-pointer" />
         <button onClick={onLogout} className="text-green-500 flex items-center">
           <Logout />
-          <span className="ml-1 hidden sm:block">Logout</span>
+          <span className="ml-1 hidden cursor-pointer sm:block">Logout</span>
         </button>
       </div>
 
@@ -380,7 +382,7 @@ const Topbar = ({ onMenuClick }) => {
                         <div key={msg.id} className="flex justify-end">
                           <div className="bg-green-100 px-4 py-2 rounded-xl max-w-[70%]">
                             <p className="text-sm">{msg.text}</p>
-                             <span className="text-[10px] text-gray-500 flex justify-end mt-1">
+                            <span className="text-[10px] text-gray-500 flex justify-end mt-1">
                               {formatTime(msg.timestamp)}
                             </span>
                           </div>

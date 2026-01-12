@@ -16,6 +16,8 @@ import {
 } from "../../Firebaseservices/CourseService";
 import { Button, Card, CardContent, Grid, Modal, Box } from "@mui/material";
 import { Download } from "lucide-react";
+import { showToast } from "../../Components/Notification";
+import Loader from "../../Components/Loader";
 
 export default function SolveAi() {
   const [progress, setProgress] = useState(0);
@@ -29,7 +31,7 @@ export default function SolveAi() {
 
     const validTypes = ["image/jpeg", "image/png", "image/jpg"];
     if (!validTypes.includes(selectedFile.type)) {
-      alert("Only image files (jpg, jpeg, png) are allowed!");
+      showToast("Only image files (jpg, jpeg, png) are allowed!", "error");
       return;
     }
 
@@ -57,10 +59,10 @@ export default function SolveAi() {
           "Content-Type": "multipart/form-data",
         },
         onSuccess: (data) => {
-          console.log("✅ QA generated successfully:", data);
+          showToast("✅ QA generated successfully:", "success");
         },
         onError: (error) => {
-          console.error("❌ Upload failed:", error);
+          showToast("⚠️ Error generating QA pairs!", "error");
         },
       });
 
@@ -72,6 +74,7 @@ export default function SolveAi() {
       console.error("Upload error:", error);
       setLoading(false);
     }
+    setLoading(false);
   };
   const [materials, setMaterials] = useState([]);
   const [open, setOpen] = useState(false);
@@ -84,38 +87,42 @@ export default function SolveAi() {
   const handleClose = () => setOpen(false);
 
   const FetchCourse = async () => {
+    setLoading(true);
     const response = await getCourses();
     console.log("Courses fetched:", response?.message);
     if (response.success) {
-      alert("✅ Course added successfully!", response?.message);
+      showToast("✅ Course added successfully!", "success");
       setMaterials(response?.message);
     } else {
-      alert("❌ Failed to fetch course.");
+      showToast("❌ Failed to fetch course.", "error");
     }
+    setLoading(false);
   };
 
   const handleSelectCourse = async (courseId) => {
     if (qaPairs.length === 0) {
-      alert("⚠️ No Q&A pairs available to upload!");
+      showToast("⚠️ No Q&A pairs available to upload!", "warning");
       return;
     }
-
+    setLoading(true);
     try {
       const result = await updateCourseWithQA(courseId, qaPairs);
       if (result.success) {
-        alert("✅ Q&A successfully added to course!");
+        showToast("✅ Q&A successfully added to course!", "success");
         setOpen(false);
       } else {
-        alert("❌ Failed to update course with Q&A.");
+        showToast("❌ Failed to update course with Q&A.", "error");
       }
     } catch (error) {
       console.error("Firestore update error:", error);
-      alert("⚠️ Something went wrong while updating Firestore.");
+      showToast("⚠️ Something went wrong while updating Firestore.", "error");
     }
+    setLoading(false);
   };
 
   return (
     <div className="w-full flex justify-center p-4 md:p-8">
+      <Loader visible={loading} />
       <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* UPLOAD SECTION */}
         <div className="flex flex-col">
