@@ -4,8 +4,11 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from pathlib import Path
 
-load_dotenv()
+
+env_path = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(env_path)
 
 router = APIRouter(prefix="/ai", tags=["AI Knowledge Chatbot"])
 
